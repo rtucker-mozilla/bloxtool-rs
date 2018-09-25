@@ -1,0 +1,1 @@
+[![Build Status](https://travis-ci.com/rtucker-mozilla/nagiosbot.svg?branch=master)](https://travis-ci.com/rtucker-mozilla/nagiosbot)
