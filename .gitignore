@@ -2,3 +2,4 @@
 target/
 .vscode/
 Cargo.lock
+bloxtool-ws.code-workspace
