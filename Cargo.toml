@@ -1,0 +1,8 @@
+[package]
+name = "bloxtool"
+version = "0.0.1"
+include = ["src/*"]
+
+[dependencies]
+rust-ini = "0.12"
+dirs = "1.0.4"
