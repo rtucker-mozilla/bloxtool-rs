@@ -2,8 +2,6 @@ extern crate dirs;
 mod bloxconfig;
 extern crate ini;
 
-use ini::Ini;
-
 //use std::path::PathBuf;
 //use ini::Ini;
 
@@ -19,9 +17,8 @@ use ini::Ini;
 */
 fn main() {
     let home_path = dirs::home_dir().unwrap();
-    let conf = Ini::load_from_file(bloxconfig::get_ini_path(home_path)).unwrap();
-    let main_config = conf.section(Some("InfoBlox")).unwrap();
-    println!("{}", main_config.get("username").unwrap());
+    let config = bloxconfig::get_config(home_path);
+    println!("updated: {}", config.host);
     //let file_path = get_ini_path(home_path);
     //println!("file_path={}", file_path);
     // The statements here will be executed when the compiled binary is called
