@@ -1,28 +1,19 @@
 use ini::Ini;
 use std::path::PathBuf;
 use std::process;
+static VERSION: &'static str = "1.4.1";
 
 pub struct Config {
     pub username: String,
     pub password: String,
     pub host: String,
-    version: String
 }
 
 impl Config {
     fn full_path(& self) -> String{
-        return format!("{}/{}/", self.host, self.version);
+        return format!("{}/wapi/v{}/", self.host, VERSION);
     }
 }
-
-
-/*
-pub fn get_ini_path(path: PathBuf) -> String {
-    let _file_name = ".bloxtool.cfg";
-    let path_string = path.as_path().to_str().unwrap();
-    return format!("{}/{}",path_string.to_string(), _file_name); //format!("{}/.bloxtool.cfg", path.as_path().to_str())
-}
-*/
 
 pub fn get_config(path: PathBuf) -> Config {
     let path_string = path.as_path().to_str().unwrap();
@@ -70,8 +61,7 @@ pub fn get_config(path: PathBuf) -> Config {
     let config = Config{
         username: l_username,
         password: l_password,
-        host: l_host,
-        version: "1.4.1".to_string()
+        host: l_host
     };
     return config;
 }
@@ -82,9 +72,8 @@ fn test_full_path() {
         username: "username".to_string(),
         password: "password".to_string(),
         host: "https://localhost".to_string(),
-        version: "1.1.1".to_string(),
     };
-    assert_eq!(config.full_path(), "https://localhost/1.1.1/");
+    assert_eq!(config.full_path(), format!("https://localhost/wapi/v{}/", VERSION));
 }
 /*
 #[test]
