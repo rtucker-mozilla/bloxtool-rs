@@ -6,3 +6,5 @@ include = ["src/*"]
 [dependencies]
 rust-ini = "0.12"
 dirs = "1.0.4"
+reqwest = "0.9.2"
+clap = {version = "2.32", features = ["yaml"]}

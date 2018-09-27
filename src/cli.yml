@@ -1,0 +1,28 @@
+name: bloxtool-rs
+version: "0.1.0"
+author: Rob Tucker <rtucker@mozilla.com>
+about: Does awesome things
+subcommands:
+    - host:
+        about: act on host object
+        version: "0.1.0"
+        author: Rob Tucker <rtucker@mozilla.com>
+        subcommands:
+            - get:
+                help: Host object
+                args:
+                    - hostname:
+                        required: true
+                        index: 1
+                    - view:
+                        required: true
+                        index: 2
+    - record:a:
+        about: act on address record
+        version: "0.1.0"
+        author: Rob Tucker <rtucker@mozilla.com>
+        args:
+            - hostname:
+                short: n
+                value_name: hostname
+                help: Host object
