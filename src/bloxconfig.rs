@@ -3,6 +3,7 @@ use std::path::PathBuf;
 use std::process;
 static VERSION: &'static str = "1.4.1";
 
+#[derive(Clone)]
 pub struct Config {
     pub username: String,
     pub password: String,
@@ -10,8 +11,8 @@ pub struct Config {
 }
 
 impl Config {
-    fn full_path(& self) -> String{
-        return format!("{}/wapi/v{}/", self.host, VERSION);
+    pub fn full_path(& self) -> String{
+        return format!("{}wapi/v{}", self.host, VERSION);
     }
 }
 
