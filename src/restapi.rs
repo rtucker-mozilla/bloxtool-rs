@@ -7,8 +7,8 @@ pub struct RESTOutput {
 }
 
 impl RESTOutput {
-    pub fn output(&self) {
-        println!("{}", self.line);
+    pub fn output(&self) -> String {
+        return format!("{}", self.line.to_string());
     }
 }
 pub struct RESTApi {
