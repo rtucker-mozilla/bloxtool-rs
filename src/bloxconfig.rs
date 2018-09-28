@@ -12,7 +12,11 @@ pub struct Config {
 
 impl Config {
     pub fn full_path(& self) -> String{
-        return format!("{}wapi/v{}", self.host, VERSION);
+        let mut hostname = self.host.clone();
+        if hostname.ends_with("/") == false {
+            hostname = format!("{}/", hostname);
+        }
+        return format!("{}wapi/v{}", hostname, VERSION);
     }
 }
 
@@ -73,6 +77,15 @@ fn test_full_path() {
         username: "username".to_string(),
         password: "password".to_string(),
         host: "https://localhost/".to_string(),
+    };
+    assert_eq!(config.full_path(), format!("https://localhost/wapi/v{}", VERSION));
+}
+#[test]
+fn test_full_path_hostname_not_having_trailing_slash() {
+    let config = Config{
+        username: "username".to_string(),
+        password: "password".to_string(),
+        host: "https://localhost".to_string(),
     };
     assert_eq!(config.full_path(), format!("https://localhost/wapi/v{}", VERSION));
 }
