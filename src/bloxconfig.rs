@@ -72,9 +72,9 @@ fn test_full_path() {
     let config = Config{
         username: "username".to_string(),
         password: "password".to_string(),
-        host: "https://localhost".to_string(),
+        host: "https://localhost/".to_string(),
     };
-    assert_eq!(config.full_path(), format!("https://localhost/wapi/v{}/", VERSION));
+    assert_eq!(config.full_path(), format!("https://localhost/wapi/v{}", VERSION));
 }
 /*
 #[test]
