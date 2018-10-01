@@ -2,6 +2,8 @@ extern crate dirs;
 extern crate ini;
 extern crate reqwest;
 extern crate serde;
+
+#[macro_use]
 extern crate serde_json;
 
 #[macro_use]
