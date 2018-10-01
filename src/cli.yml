@@ -9,7 +9,32 @@ subcommands:
         author: Rob Tucker <rtucker@mozilla.com>
         subcommands:
             - get:
-                help: Host object
+                help: Get Host object
+                args:
+                    - hostname:
+                        required: true
+                        index: 1
+                    - view:
+                        required: true
+                        index: 2
+            - create:
+                help: Get Host object
+                args:
+                    - hostname:
+                        required: true
+                        index: 1
+                    - ipv4addr:
+                        required: true
+                        index: 2
+                    - view:
+                        required: true
+                        index: 3
+                    - mac:
+                        long: "mac"
+                        value_name: mac
+                        required: false
+            - delete:
+                help: Get Host object
                 args:
                     - hostname:
                         required: true

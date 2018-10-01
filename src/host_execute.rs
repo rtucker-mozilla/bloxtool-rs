@@ -29,6 +29,7 @@ struct Host {
 pub fn execute(host_matches: &clap::ArgMatches, config: bloxconfig::Config){
     let mut host_search = "";
     let mut view = "";
+    let mut ipv4addr = "";
     // executed when someone does bloxtool host get <hostname> <view>
     if let Some(_get_matches) = host_matches.subcommand_matches("get") {
         match _get_matches.value_of("hostname"){
@@ -39,7 +40,40 @@ pub fn execute(host_matches: &clap::ArgMatches, config: bloxconfig::Config){
             Some(value) => { view = value },
             None => println!("View Required")
         }
-        get_host(host_search.to_string(), view.to_string(), config);
+        get_host(host_search.to_string(), view.to_string(), config.clone());
+    }
+
+    if let Some(_get_matches) = host_matches.subcommand_matches("create") {
+        let mut mac = "";
+        match _get_matches.value_of("hostname"){
+            Some(value) => { host_search = value },
+            None => println!("Host Required")
+        }
+        match _get_matches.value_of("view"){
+            Some(value) => { view = value },
+            None => println!("View Required")
+        }
+        match _get_matches.value_of("ipv4addr"){
+            Some(value) => { ipv4addr = value },
+            None => println!("ipv4addr Required")
+        }
+        match _get_matches.value_of("mac"){
+            Some(value) => { mac = value },
+            None => { }
+        }
+        create_host(host_search.to_string(), ipv4addr.to_string(), view.to_string(), mac.to_string(), config.clone());
+    }
+
+    if let Some(_get_matches) = host_matches.subcommand_matches("delete") {
+        match _get_matches.value_of("hostname"){
+            Some(value) => { host_search = value },
+            None => println!("Host Required")
+        }
+        match _get_matches.value_of("view"){
+            Some(value) => { view = value },
+            None => println!("View Required")
+        }
+        delete_host(host_search.to_string(), view.to_string(), config.clone());
     }
 }
 
@@ -59,9 +93,90 @@ fn list_to_struct(i_list: Vec<Host>) -> Vec<restapi::RESTOutput>{
         )
     }
     return restoutput_array;
-
 }
 
+fn delete_host(hostname: String, view: String, config: bloxconfig::Config) {
+    let host_search=format!("record:host?name={}&view={}", hostname, view);
+    let url = format!("{}/{}", &config.full_path(), host_search);
+    let r = restapi::RESTApi {
+        url: url,
+        config: config.clone()
+    };
+    match r.get() { 
+        // MAke sure we are able to talk to the server
+        Ok(mut data) => { 
+            // Make sure the json response is valid
+            match data.json() {
+                Ok(inside) => { 
+                    // convert json list to array of Host structs
+                    let resp_obj: serde_json::Value = inside;
+                    let _ref = &resp_obj[0]["_ref"].to_string();
+                    if _ref.len() == 0 || _ref == "null" {
+                        println!("Error: Host not found. {}", hostname);
+                    } else {
+                        let delete_url = format!("{}/{}", config.clone().full_path(), _ref.trim_matches('"'));
+                        let d = restapi::RESTApi {
+                            url: delete_url,
+                            config: config.clone()
+                        };
+
+                        match d.delete() {
+                            Ok(mut resp) => { 
+                                let resp_obj: serde_json::Value = resp.json().unwrap();
+                                if resp.status() == 400 {
+                                    println!("Error: {}", resp_obj["text"]);
+                                }
+                                if resp.status() == 200 {
+                                    println!("Success {}", resp_obj);
+                                }
+                            },
+                            Err(error) => { println!("Error: {}", error)}
+                        }
+                    }
+                },
+                Err(error) => { println!("Error: {}", error)}
+            }
+        },
+        Err(error) => { println!("Error: {}", error)}
+    }
+
+}
+fn create_host(hostname: String, ipv4addr: String, view: String, mac: String, config: bloxconfig::Config) {
+    let host_search="record:host";
+    let url = format!("{}/{}", config.full_path(), host_search);
+    let r = restapi::RESTApi {
+        url: url,
+        config: config
+    };
+
+    let mut addrobject = json!({
+        "ipv4addr": ipv4addr,
+    });
+
+    // mac is an optional param, adding a blank one gets a complaint from the API
+    if mac.len() > 0 {
+        addrobject["mac"] = serde_json::Value::String(mac);
+    }
+
+    let post_data = json!({
+        "name": hostname,
+        "ipv4addrs": [ addrobject ],
+        "view": view,
+    });
+
+    match r.post(post_data) {
+        Ok(mut resp) => { 
+            let resp_obj: serde_json::Value = resp.json().unwrap();
+            if resp.status() == 400 {
+                println!("Error: {}", resp_obj["text"]);
+            }
+            if resp.status() == 201 {
+                println!("Success {}", resp_obj);
+            }
+        },
+        Err(error) => { println!("Error: {}", error)}
+    }
+}
 
 fn get_host(host_search: String, view: String, config: bloxconfig::Config) {
     let host_search=format!("record:host?name~={}&view={}", host_search, view);
