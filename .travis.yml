@@ -4,13 +4,12 @@ rust:
 - stable
 script:
 - cargo build --release
-- cargo test --all
+# - cargo test --all
 matrix:
   include:
   - os: linux
     rust: stable
-    env: TARGET=aarch64-unknown-linux-gnu
-    dist: trusty
+    env: TARGET=x86_64-unknown-linux-gnu
 #  - os: osx
 #    rust: stable
 #    env: TARGET=x86_64-apple-darwin
@@ -23,6 +22,10 @@ deploy:
   file: "target/release/*"
   on:
     tags: true
+after_deploy:
+  - ls -l
+  - pwd
+  - ls -l target/release/
 notifications:
   email:
     on_success: never
