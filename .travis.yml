@@ -3,8 +3,8 @@ cache: cargo
 rust:
 - stable
 script:
-- cargo build --verbose --all
-- cargo test --verbose --all
+- cargo build --release
+- cargo test --all
 matrix:
   include:
   - os: linux
