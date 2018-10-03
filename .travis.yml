@@ -2,11 +2,11 @@ language: rust
 cache: cargo
 rust:
 - stable
-script:
-- cross build ${BUILDARGS} --release
 matrix:
   include:
   - os: linux
+    script:
+    - cross build ${BUILDARGS} --release
     before_install:
     - sudo apt-get install -y libssl-dev musl musl-dev musl-tools
     - cargo install cross
@@ -22,6 +22,8 @@ matrix:
     sudo: required
   - os: osx
     rust: stable
+    script:
+    - cargo build --release
     env:
       - FILENAME=bloxtool-osx-x86_64
       - BUILDARGS=""
@@ -35,6 +37,8 @@ deploy:
   on:
     tags: true
 before_deploy:
+  - ls target
+  - ls target/release
   - mv target/release/bloxtool target/release/${FILENAME}
 notifications:
   email:
