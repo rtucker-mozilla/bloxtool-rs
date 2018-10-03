@@ -42,6 +42,41 @@ subcommands:
                     - view:
                         required: true
                         index: 2
+    - cname:
+        about: act on cname object
+        version: "0.1.0"
+        author: Rob Tucker <rtucker@mozilla.com>
+        subcommands:
+            - get:
+                help: get cname object
+                args:
+                    - cname:
+                        required: true
+                        index: 1
+                    - view:
+                        required: true
+                        index: 2
+            - create:
+                help: create cname object
+                args:
+                    - alias:
+                        required: true
+                        index: 1
+                    - cname:
+                        required: true
+                        index: 2
+                    - view:
+                        required: true
+                        index: 3
+            - delete:
+                help: delete cname object
+                args:
+                    - cname:
+                        required: true
+                        index: 1
+                    - view:
+                        required: true
+                        index: 2
     - record:a:
         about: act on address record
         version: "0.1.0"
@@ -50,4 +85,4 @@ subcommands:
             - hostname:
                 short: n
                 value_name: hostname
-                help: Host object
+                help: Host objectt

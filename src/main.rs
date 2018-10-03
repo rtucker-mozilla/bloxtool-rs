@@ -13,7 +13,8 @@ extern crate clap;
 extern crate serde_derive;
 
 mod bloxconfig;
-mod host_execute;
+//mod host_execute;
+mod cname_execute;
 mod restapi;
 use clap::App;
 
@@ -22,8 +23,14 @@ fn main() {
     let config = bloxconfig::get_config(home_path);
     let _yaml = load_yaml!("cli.yml");
     let matches = App::from_yaml(_yaml).get_matches();
+    /*
     match matches.subcommand_matches("host") {
-        Some(value) => { host_execute::execute(value, config) },
+        Some(value) => { host_execute::execute(value, config.clone()) },
+        None => {}
+    }
+    */
+    match matches.subcommand_matches("cname") {
+        Some(value) => { cname_execute::execute(value, config.clone()) },
         None => {}
     }
 }

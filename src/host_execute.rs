@@ -82,12 +82,12 @@ fn count_results(input_json: Vec<Host>) -> usize {
     return array.len();
 }
 
-fn list_to_struct(i_list: Vec<Host>) -> Vec<restapi::RESTOutput>{
-    let mut restoutput_array: Vec<restapi::RESTOutput> = Vec::new();
+fn list_to_struct(i_list: Vec<Host>) -> Vec<restapi::InfobloxResponse>{
+    let mut restoutput_array: Vec<restapi::InfobloxResponse> = Vec::new();
     let delim = "=";
     for item in i_list {
         restoutput_array.push(
-            restapi::RESTOutput {
+            restapi::InfobloxResponse {
                 line: format!("_ref{}{} hostname{}{} ipv4addr{}{} mac{}{}", delim, item._ref, delim,item.name, delim,item.ipv4addrs[0].ipv4addr, delim,item.ipv4addrs[0].mac)
             }
         )
