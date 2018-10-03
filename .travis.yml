@@ -11,9 +11,9 @@ matrix:
     rust: stable
     env: TARGET=aarch64-unknown-linux-gnu
     dist: trusty
-  - os: osx
-    rust: stable
-    env: TARGET=x86_64-apple-darwin
+#  - os: osx
+#    rust: stable
+#    env: TARGET=x86_64-apple-darwin
 deploy:
   skip_cleanup: true
   provider: releases
