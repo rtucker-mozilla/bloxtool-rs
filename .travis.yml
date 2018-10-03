@@ -15,7 +15,7 @@ matrix:
 deploy:
   provider: releases
   api_key:
-    secure: GQThqsxeA5MNeNBK4sZLCiX60d3W0JmxEb4GyAdBrNqqX8049mi6Muif1ela/+dVTe/ivmB0fBQ2/poqiAWmHM72FK5WOCr6ImSBfTpWoLQFtFNRBzangACs2N/0jvV4HpOPA6W7818szYNxaax9kH2jH+mAPBUESkwI+hbhSeMthwDGpeZyzb73xMYhqg9nd9HzMS
-  file: 'target/release/bloxtool'
+    secure: "GQThqsxeA5MNeNBK4sZLCiX60d3W0JmxEb4GyAdBrNqqX8049mi6Muif1ela/+dVTe/ivmB0fBQ2/poqiAWmHM72FK5WOCr6ImSBfTpWoLQFtFNRBzangACs2N/0jvV4HpOPA6W7818szYNxaax9kH2jH+mAPBUESkwI+hbhSeMthwDGpeZyzb73xMYhqg9nd9HzMS"
+  file: "target/release/bloxtool"
   on:
     repo: rtucker-mozilla/bloxtool-rs
