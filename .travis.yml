@@ -20,7 +20,7 @@ deploy:
   api_key:
     secure: nCFOXM7YeV0vXs5OzONVQUf3wdYOZuxRv14Hnqa/GkI7AxgMtk9OmwztlD2nqIYYW8PDf2rGh0YrifP95riJ1qZz7vS5LMSruUkkOSh5Gkf4XMr0S0YLQt7pi7aZFD1/SQHKha+8hBEJkst+uvgYo02yANU43S0s4Bm+saWcYeFM3uAduB80sLm1uX6rcg5MXkmsY814NlCfS5r4S8KLWWpeIM2gtXy9F+IqQMTcWLQyIm9aQJqemUXC9QfzR2OIPm3uqDL1Hzx3bMiDfnLpjFxFwIzBSHRc8gbtRQCeCQLjTOvQtJhfxnfrHqn0l77LsbzjG4LrXapTHGDF4BMilUZji7be1Vrii/tYNKH/xW1guz7Bm9i0AY5KGdk4FFNIWVcb+w9x73xp5u2aj+N2WnONA6uG5DBbyEEyFTLlO8K+JtGFQjWPNJl3k6niAlYWrRLOC6zf+RPQtOsxjqPADfwbHXzVM8vTy7bfgmGi6kOcYDBnII5YkLTDX9dbW5ogLe0UsOwE+zeWZ492dtwpbrfBD85/Q+/tN9N2sS7y4XvVUFb4Z5lxOG/Rid6KModuruqIwpqiD63WiqtHygBNdd4j7gKr6SPxFenOQZkZ9At0677sm505nF6pJgTRDYHS75670OBvwfwCT1DnsDLkUZaGJccKRMkwjpvEl1/zMpY=
   file_glob: true
-  file: "target/release/${TARGET}"
+  file: "target/release/*"
   on:
     tags: true
 notifications:
