@@ -22,7 +22,7 @@ deploy:
   file_glob: true
   file: "target/release/*"
   on:
-    repo: rtucker-mozilla/bloxtool-rs
+    tags: true
 notifications:
   email:
     on_success: never
