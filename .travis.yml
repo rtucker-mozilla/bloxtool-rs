@@ -3,13 +3,14 @@ cache: cargo
 rust:
 - stable
 script:
-- cargo build --release
+- cargo build ${BUILDARGS} --release
 matrix:
   include:
   - os: linux
     rust: stable
     env: 
-      _ TARGET=x86_64-unknown-linux-musl
+      - TARGET=x86_64-unknown-linux-musl
+      - BUILDARGS="--target=${TARGET}"
       - FILENAME=bloxtool-C7-linux-x86_64
     dist: trusty
     sudo: required
@@ -22,7 +23,8 @@ matrix:
   - os: osx
     rust: stable
     env:
-    - FILENAME=bloxtool-osx-x86_64
+      - FILENAME=bloxtool-osx-x86_64
+      - BUILDARGS=""
 deploy:
   skip_cleanup: true
   provider: releases
