@@ -39,7 +39,7 @@ deploy:
 before_deploy:
   - ls target
   - ls target/release
-  - mv target/release/bloxtool target/release/${FILENAME}
+  - mv target/${TARGET}/release/bloxtool target/release/${FILENAME}
 notifications:
   email:
     on_success: never
