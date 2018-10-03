@@ -4,25 +4,21 @@ rust:
 - stable
 script:
 - cargo build --release
-# - cargo test --all
 matrix:
   include:
   - os: linux
     rust: stable
-    env: 
-    -  FILENAME=bloxtool-linux-x86_64
+    env:
+    - FILENAME=bloxtool-linux-x86_64
   - os: osx
     rust: stable
-    env: 
-    -  FILENAME=bloxtool-osx-x86_64
-#  - os: osx
-#    rust: stable
-#    env: TARGET=x86_64-apple-darwin
+    env:
+    - FILENAME=bloxtool-osx-x86_64
 deploy:
   skip_cleanup: true
   provider: releases
   api_key:
-    secure: nCFOXM7YeV0vXs5OzONVQUf3wdYOZuxRv14Hnqa/GkI7AxgMtk9OmwztlD2nqIYYW8PDf2rGh0YrifP95riJ1qZz7vS5LMSruUkkOSh5Gkf4XMr0S0YLQt7pi7aZFD1/SQHKha+8hBEJkst+uvgYo02yANU43S0s4Bm+saWcYeFM3uAduB80sLm1uX6rcg5MXkmsY814NlCfS5r4S8KLWWpeIM2gtXy9F+IqQMTcWLQyIm9aQJqemUXC9QfzR2OIPm3uqDL1Hzx3bMiDfnLpjFxFwIzBSHRc8gbtRQCeCQLjTOvQtJhfxnfrHqn0l77LsbzjG4LrXapTHGDF4BMilUZji7be1Vrii/tYNKH/xW1guz7Bm9i0AY5KGdk4FFNIWVcb+w9x73xp5u2aj+N2WnONA6uG5DBbyEEyFTLlO8K+JtGFQjWPNJl3k6niAlYWrRLOC6zf+RPQtOsxjqPADfwbHXzVM8vTy7bfgmGi6kOcYDBnII5YkLTDX9dbW5ogLe0UsOwE+zeWZ492dtwpbrfBD85/Q+/tN9N2sS7y4XvVUFb4Z5lxOG/Rid6KModuruqIwpqiD63WiqtHygBNdd4j7gKr6SPxFenOQZkZ9At0677sm505nF6pJgTRDYHS75670OBvwfwCT1DnsDLkUZaGJccKRMkwjpvEl1/zMpY=
+    secure: FUXxh+M7eldAbJr+IacSiGDN5D1vKa8RSbGZq+udmqXUZZUOrxOTdi0QjNcXD1fEXEXz9nM9Tw4uLG15WTF8CNIGvViKx5tDgr2YATqtuSWctuiLK5WBoCir/3uAS+neuOkJ7TQOOTh+BQJ/AwlbDTN/UEi+V1ZrAimbJqKooix1xsgRXEWHWMc2Q7EnECBMudzDbb83+yVDgKZp+ObcF2rdkEzfMQ7viUY29LazFJt3AL6mq/vVJ18BtlHPmdyMsqu3MOGvw4hgyYXy8/DPl3n+DvN+qmc184zdbTU5Hqj9ngyCCepu7z9s/Of2zy8QefCTwBia+kl/nmWCa+4U9N699sugex6X0x0J7EdLge6KLJ/jN2qG7xAq7LKFCk7py3eStWdftvzatBZS42m5elgUI6LiHKEJ/9lDrn+OquJKVfoiSGtbyPnyz2jB8MzZ9/rOs8mLCeJOb9zpRoBLzzjs89CyZE//qlNC2zIP39WyNpauLatB+IdnffPWQdKKv5Bwx8p5vDjI3szdUzmTJbOm7tRoQlS9VPMPdPSQ+k7+P3uNaZhz4OgbfbW1kzbu5znrE0T4gpIEFYLfRDNWNiPb4knh6s2oAnK1CeHtGY8PtpnufSLAidHZegsSnuBQ75Fq10VD3cHwegENNaDBSR4qZpSzPEVMHjJ8WKEMhE8=
   file_glob: true
   file: target/release/${FILENAME}
   on:
