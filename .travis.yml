@@ -9,17 +9,24 @@ script:
 - cargo build --verbose --all
 - cargo test --verbose --all
 matrix:
-  allow_failures:
-  - rust: nightly
-  fast_finish: true
+  include:
+    # Stable channel
+    - os: linux
+      rust: stable
+      env: TARGET=aarch64-unknown-linux-gnu
+      # need Trusty because the glibc in Precise is too old and doesn't support 64-bit arm
+      dist: trusty
+    - os: osx
+      rust: stable
+      env: TARGET=x86_64-apple-darwin
+sudo: required
 deploy:
   provider: releases
   skip_cleanup: true
   before_deploy: "cd ~/"
   api_key:
     secure: 'Jbpw7gy4BBX2C/FQrUV8VQCs1ou6ZTPILEqECe422hvyBCaH6C7qCnexEVEjE2bFx1/37ubo45da5am9G5rUJfIvaWIXuBdRwLCfzcHB9WAoBjwiDvol9ohzPM6dCQk7gKVb72EKj4TVbL8LkVxa0zjaoQzlb9O+uMjSgqPxR6uZwHMxtBAKWUppK3ttb8lwekcT/HXpfIyCv30x0dhK0cHpeRWFZmTlQixunAm5HCjYvK1Id3kYmurmUH5IEtqpNr+VGD+ZLxI6q8rVTaIEdvZDM/3TANgVNjMBamdAcLoZzwTyclrqANmhG0PVJ7jo4zbHyv7PJfv/+LAvFJ833N7Xtu2jN228doEEScI0uZ7mvBJgh1ocNqx2ZDM5WP7coRlqaN0iX7EW/3Kyo2dkSAGxPxaFtW3z8cbIVXMOfqxkve077j47v80bz6qUmLT8diL7DqJzc1/NnAmYGcmRPfVIxLjw8sv5Bq1geSj4GKdOZzPH9tjG8EiXnh0FWPokLv2WjTTeqrdtsI7ri9bxho6t8R3soejvKI1FRYfZaslthEeTjd7W8FAInzAXb6kfkuvgoTRwBUDlP3Y/ebw+WF42poB5geJ3lUY7WcUFkZVHbzGI70PiYR7A+k3lQhaChAM/rptTqgwb2nfIusBSCDklgGJYxN5TKXRi3N//kcE='
-  file: 'target/release/bloxtool*'
+  file: ${PROJECT_NAME}-${TRAVIS_TAG}-${TARGET}.*
   file_glob: true
   on:
-    repo: rtucker-mozilla/bloxtool-rs
-    all_branches: true
+    tags: true
