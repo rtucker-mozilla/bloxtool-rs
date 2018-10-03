@@ -6,19 +6,23 @@ script:
 - cargo build --release
 matrix:
   include:
-  - OS_TYPE=centos OS_VERSION=7
+  - os: linux
     rust: stable
-    env:
-    - FILENAME=bloxtool-C7-linux-x86_64
-  - dist: trusty
-    rust: stable
-    env:
-    - FILENAME=bloxtool-trusty-linux-x86_64
+    env: 
+      _ TARGET=x86_64-unknown-linux-musl
+      - FILENAME=bloxtool-C7-linux-x86_64
+    dist: trusty
+    sudo: required
+    addons:
+    apt:
+    packages: &musl_packages
+      - musl
+      - musl-dev
+      - musl-tools
   - os: osx
     rust: stable
     env:
     - FILENAME=bloxtool-osx-x86_64
-
 deploy:
   skip_cleanup: true
   provider: releases
