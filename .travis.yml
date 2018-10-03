@@ -15,11 +15,11 @@ matrix:
     dist: trusty
     sudo: required
     addons:
-    apt:
-      packages: &musl_packages
-        - musl
-        - musl-dev
-        - musl-tools
+      apt:
+        packages: &musl_packages
+          - musl
+          - musl-dev
+          - musl-tools
   - os: osx
     rust: stable
     env:
