@@ -23,6 +23,7 @@ matrix:
           - musl
           - musl-dev
           - musl-tools
+          - libssl-dev
   - os: osx
     rust: stable
     env:
