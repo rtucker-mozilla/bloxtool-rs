@@ -3,12 +3,13 @@ cache: cargo
 rust:
 - stable
 script:
-- cargo build ${BUILDARGS} --release
+- cross build ${BUILDARGS} --release
 matrix:
   include:
   - os: linux
     before_install:
     - sudo apt-get install -y libssl-dev musl musl-dev musl-tools
+    - cargo install cross
     install:
     - rustup target add x86_64-unknown-linux-musl
     rust: stable
