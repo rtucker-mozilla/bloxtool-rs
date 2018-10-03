@@ -18,7 +18,7 @@ deploy:
   provider: releases
   api_key:
     secure: sRbRgxMOJUPXX3PDGNvlXIoLp3mSWwBP11t/wMhEIkbr8OnEsAUwfRhRfPaamLMHpG4uXoaqF1itO5yM8hO7KOOquvi28kx2KSxVT0ffdaEL9xrdNEZFUzQ6CmbuZt9uUzq9L1a+3LvsL8o9t+xNe9Fk+YtyJnJ22C0e1BXimuv9gZPu3fW//dhLFasbsurNHARQ5WCVJ2YEdkWNJXCfqkZ071vp7wEFTdnwHKTc+lWcYQuykIijSl4roj96g+SI/NwyK3if3f9Gtk2cMLCyoIEjRSvr2fKVnG8EfIfTTuilnCKZBhCe4MerSTMOgitNKaLKCQ7TsB//ckGqpt+ggEJ9QlxNu4J8c0UkUTGdcZSGHBKbzVjQMbJgPj/qsdYvGTf2CKFQ3Ie8WoEBqNSODrUbvCO8m2e96ZS5YZKdzP3IyecEC8O9Wccd7Aoxy9cV8PHmS7yf5mL8SjqbWNacv2up4wkamfs5+mVpq41Jhp1D/zrMipcezWFirTIOkrztQYAocsdU2RR7t4ONcNUEeTL74OiBCw9GW3dt+QhWcqhsj2MtSobKREEaMg653qojuiL79dl37NYvHVMROIC0hMxlZUZkf2k588FGNlSoFEyWz42XUyv7vwWlBj8g75a9uzyqsRHvHOwf8E+fUDGQw4Vs7A442sD2rx485BR4ZB8=
-  file: "bloxtool*"
+  file: "src/cli.yml"
   on:
     tags: true
 notifications:
