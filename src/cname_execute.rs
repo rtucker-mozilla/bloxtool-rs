@@ -79,22 +79,39 @@ pub fn execute(cname_matches: &clap::ArgMatches, config: bloxconfig::Config){
 
 fn delete_cname(cname: String, view: String, config: bloxconfig::Config) {
     let cname_search=format!("{}?name={}&view={}", ENDPOINT, cname, view);
-    let url = format!("{}/{}", &config.full_path(), cname_search);
     let r = restapi::RESTApi {
-        url: url,
         config: config.clone()
     };
 
-    match r.delete_object() {
-        // need to decide how to reformat the url here for delete
-        Some(_status) => { println!("deleted")},
-        None => { println!("Error=Not Found." )}
+    match r.get(cname_search) {
+        Some(resp) => {
+            if resp.len() == 0 {
+                println!("{} not found.", cname);
+            }
+            if resp.len() == 1 {
+                for entry in resp{
+                    let cname: Cname = serde_json::from_value(entry).unwrap();
+                    let outname = cname.clone();
+                    match r.delete(cname._ref) {
+                        Ok(d_resp) => {
+                            if d_resp.is_object() {
+                                println!("Error: {}", d_resp["text"]);
+                            } else if d_resp.is_string(){
+                                println!("Success Deleted: {}", outname.name);
+                            }
+                        },
+                        Err(error) => { println!("Error: {}.", error)}
+                    }
+                }
+            } else {
+                println!("Error: Too Many Records Returned.");
+            }
+        },
+        None => { }
     }
 }
 fn create_cname(cname: String, name: String, view: String, config: bloxconfig::Config) {
-    let url = format!("{}/{}", config.full_path(), ENDPOINT);
     let r = restapi::RESTApi {
-        url: url,
         config: config
     };
 
@@ -103,24 +120,34 @@ fn create_cname(cname: String, name: String, view: String, config: bloxconfig::C
         "name": name,
         "view": view,
     });
+    let url = ENDPOINT.to_string();
 
-    r.create_object(post_data);
-}
-
-fn get_cname(cname_search: String, view: String, config: bloxconfig::Config) {
-    let cname_search=format!("{}?name~={}&view={}", ENDPOINT, cname_search, view);
-    let url = format!("{}/{}", config.full_path(), cname_search);
-    let r = restapi::RESTApi {
-        url: url,
-        config: config
-    };
-    match r.get_object() {
-        Some(resp) => {
-            for obj in resp.json {
-                let c: Cname = serde_json::from_value(obj).unwrap();
-                println!("{}", c);
+    match r.create(url, post_data) {
+        Ok(resp) => {
+            if resp.is_object() {
+                println!("Error: {}", resp["text"]);
+            } else if resp.is_string(){
+                println!("Success: {}", resp);
             }
         },
-        None => { println!("Not Found.") }
+        Err(error) => { println!("Error: {}.", error)}
+    }
+}
+fn get_cname(cname: String, view: String, config: bloxconfig::Config) {
+    let search=format!("{}?name~={}&view={}", ENDPOINT, cname, view);
+    let r = restapi::RESTApi {
+        config: config
+    };
+    match r.get(search) {
+        Some(resp) => {
+            if resp.len() == 0 {
+                println!("Error: {} not found.", cname);
+            }
+            for entry in resp{
+                let cname: Cname = serde_json::from_value(entry).unwrap();
+                println!("{}", cname);
+            }
+        },
+        None => { println!("{} not found.", cname)}
     }
 }

@@ -1,6 +1,7 @@
 use reqwest;
 use bloxconfig;
 use serde_json::Value;
+use reqwest::StatusCode;
 
 #[allow(dead_code)]
 pub struct InfobloxResponse {
@@ -24,7 +25,6 @@ impl InfobloxResponse {
 }
 
 pub struct RESTApi {
-    pub url: String,
     pub config: bloxconfig::Config
 }
 
@@ -34,31 +34,12 @@ impl RESTApi {
         return reqwest::Client::new();
     }
 
-    pub fn get_object(&self) -> Option<InfobloxResponse>{
-        match self.get() { 
-            // MAke sure we are able to talk to the server
-            Ok(mut data) => { 
-                // Make sure the json response is valid
-                match data.json() {
-                    Ok(inside) => { 
-                        let objects: Vec<Value> = inside;
-                        if objects.len() == 0 {
-                            return None;
-                        } else {
-                            let resp = InfobloxResponse{
-                                json: objects
-                            };
-                            return Some(resp);
-                        }
-                        // convert json list to array of Cname structs
-                    },
-                    Err(_error) => { return None }
-                }
-            },
-            Err(_error) => { return None }
-        }
+    fn get_url(&self, hostpath: &String, ipath: &String) -> String {
+
+        return format!("{}/{}",hostpath, ipath);
 
     }
+    /*
 
     pub fn delete_object(&self) -> Option<bool> {
         match self.get_object() {
@@ -72,7 +53,9 @@ impl RESTApi {
             None => { return None }
         }
     }
+    */
 
+    /*
     pub fn create_object(&self, post_data: Value) {
         match self.post(post_data) {
             Ok(mut resp) => { 
@@ -88,34 +71,86 @@ impl RESTApi {
         }
 
     }
+    */
 
     fn trim_quotes(&self, url: String) -> String {
         return url.trim_matches('"').to_string();
     }
 
-    pub fn get(&self) -> Result<reqwest::Response, reqwest::Error>{
+    pub fn get(&self, iref: String) -> Option<Vec<Value>> {
         let client = self.get_client();
         let config = self.config.clone();
-        let resp = client.get(self.url.as_str()).basic_auth(config.username, Some(config.password)).send();
-        return resp;
+        let host_path = config.full_path();
+        let full_path = self.get_url(&host_path, &iref);
+        let resp = client.get(full_path.as_str()).basic_auth(config.username, Some(config.password)).send();
+        match resp {
+            Ok(mut _resp) => {
+                match _resp.status(){
+                    StatusCode::OK => { 
+                        //println!("{:#?}", _resp.json());
+                        return _resp.json().unwrap();
+                    },
+                    StatusCode::UNAUTHORIZED => {
+                        println!("Invalid Username/Password.")
+                    },
+                    s => { println!("Unknown: {}", s) }
+                }
+            },
+            Err(_err) => { 
+                println!("{}", _err);
+            }
+        }
+        None
     }
 
-    pub fn delete(&self, asdf: String) -> Result<reqwest::Response, reqwest::Error>{
-        let mut _ref = asdf;
+    pub fn delete(&self, iref: String) -> Result<Value, String> {
 
         let client = self.get_client();
         let config = self.config.clone();
-        println!("will delete {}", _ref);
-        _ref = self.trim_quotes(_ref);
-        let url = format!("{}/{}", &config.full_path(), _ref);
-        println!("{}", url);
-        return client.delete(url.as_str()).basic_auth(config.username, Some(config.password)).send()
+        let _ref = self.trim_quotes(iref);
+        let host_path = config.full_path();
+        let full_path = self.get_url(&host_path, &_ref);
+        let resp = client.delete(full_path.as_str()).basic_auth(config.username, Some(config.password)).send();
+        match resp {
+            Ok(mut _resp) => {
+                Ok(_resp.json().unwrap())
+            }
+            Err(_error) => {
+                return Result::Err("Uknown Error".to_string());
+            }
+        }
     }
 
-    pub fn post(&self, post_data: Value) -> Result<reqwest::Response, reqwest::Error>{
+    pub fn create(&self, iref: String, post_data: Value) -> Result<Value, String> {
         let client = self.get_client();
         let config = self.config.clone();
-        return client.post(self.url.as_str()).basic_auth(config.username, Some(config.password)).json(&post_data).send();
+        let host_path = config.full_path();
+        let full_path = self.get_url(&host_path, &iref);
+        let resp = client.post(full_path.as_str()).basic_auth(config.username, Some(config.password)).json(&post_data).send();
+        match resp {
+            Ok(mut _resp) => {
+                Ok(_resp.json().unwrap())
+            },
+            Err(_error) => {
+                return Result::Err("Uknown Error".to_string());
+            }
+        }
     }
+}
 
+#[test]
+fn test_trim_quotes() {
+    let config = bloxconfig::Config{
+        host: "https://localhost".to_string(),
+        username: "admin".to_string(),
+        password: "admin".to_string()
+
+    };
+    let tmp = RESTApi {
+        config: config,
+        url: "\"foo.bar.baz/cname\"".to_string()
+    };
+    let untrimmed = "\"foo.bar.baz/cname\"".to_string();
+    let trimmed = tmp.trim_quotes(untrimmed);
+    assert_eq!(trimmed, "foo.bar.baz/cname");
 }

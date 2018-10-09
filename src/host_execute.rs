@@ -92,15 +92,26 @@ fn delete_host(host: String, view: String, config: bloxconfig::Config) {
         url: url,
         config: config.clone()
     };
+    match r.get() {
+        Some(resp) => {
+            for entry in resp{
+                let host: Host = serde_json::from_value(entry).unwrap();
+                println!("delete {}", host);
+            }
+        },
+        None => { }
+    }
 
+    /*
     match r.delete_object() {
         // need to decide how to reformat the url here for delete
         Some(_status) => { println!("deleted")},
         None => { println!("Error=Not Found." )}
     }
+    */
 }
 
-
+/*
 fn get_host(hostname: String, view: String, config: bloxconfig::Config) {
     let search=format!("{}?name~={}&view={}", ENDPOINT, hostname, view);
     let url = format!("{}/{}", config.full_path(), search);
@@ -113,6 +124,26 @@ fn get_host(hostname: String, view: String, config: bloxconfig::Config) {
             for obj in resp.json {
                 let c: Host = serde_json::from_value(obj).unwrap();
                 println!("{}", c);
+            }
+        },
+        None => { println!("Not Found.") }
+    }
+}
+*/
+
+fn get_host(hostname: String, view: String, config: bloxconfig::Config) {
+    let search=format!("{}?name~={}&view={}", ENDPOINT, hostname, view);
+    let url = format!("{}/{}", config.full_path(), search);
+    let r = restapi::RESTApi {
+        url: url,
+        config: config
+    };
+    match r.get() {
+        Some(resp) => {
+            println!("{}", resp.len());
+            for entry in resp{
+                let host: Host = serde_json::from_value(entry).unwrap();
+                println!("{}", host);
             }
         },
         None => { println!("Not Found.") }
