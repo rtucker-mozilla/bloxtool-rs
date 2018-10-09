@@ -147,8 +147,7 @@ fn test_trim_quotes() {
 
     };
     let tmp = RESTApi {
-        config: config,
-        url: "\"foo.bar.baz/cname\"".to_string()
+        config: config
     };
     let untrimmed = "\"foo.bar.baz/cname\"".to_string();
     let trimmed = tmp.trim_quotes(untrimmed);
