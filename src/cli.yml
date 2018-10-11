@@ -1,9 +1,9 @@
 name: bloxtool-rs
 version: "0.1.0"
 author: Rob Tucker <rtucker@mozilla.com>
-about: Does awesome things
+about: CLI interface to infoblox
 subcommands:
-    - host:
+    - record:host:
         about: act on host object
         version: "0.1.0"
         author: Rob Tucker <rtucker@mozilla.com>
@@ -18,7 +18,7 @@ subcommands:
                         required: true
                         index: 2
             - create:
-                help: Get Host object
+                help: Create Host object
                 args:
                     - hostname:
                         required: true
@@ -34,7 +34,7 @@ subcommands:
                         value_name: mac
                         required: false
             - delete:
-                help: Get Host object
+                help: Delete Host object
                 args:
                     - hostname:
                         required: true
@@ -42,13 +42,13 @@ subcommands:
                     - view:
                         required: true
                         index: 2
-    - cname:
+    - record:cname:
         about: act on cname object
         version: "0.1.0"
         author: Rob Tucker <rtucker@mozilla.com>
         subcommands:
             - get:
-                help: get cname object
+                help: Get CNAME Object
                 args:
                     - cname:
                         required: true
@@ -57,7 +57,7 @@ subcommands:
                         required: true
                         index: 2
             - create:
-                help: create cname object
+                help: Create CNAME Object
                 args:
                     - alias:
                         required: true
@@ -69,7 +69,7 @@ subcommands:
                         required: true
                         index: 3
             - delete:
-                help: delete cname object
+                help: Delete CNAME Object
                 args:
                     - cname:
                         required: true
@@ -85,4 +85,4 @@ subcommands:
             - hostname:
                 short: n
                 value_name: hostname
-                help: Host objectt
+                help: Host object

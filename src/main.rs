@@ -29,7 +29,7 @@ fn main() {
         None => {}
     }
     */
-    match matches.subcommand_matches("cname") {
+    match matches.subcommand_matches("record:cname") {
         Some(value) => { cname_execute::execute(value, config.clone()) },
         None => {}
     }

@@ -1,8 +1,11 @@
 use clap;
 use bloxconfig;
 use restapi;
+use restapi::InfobloxResponse;
 use serde_json;
+use serde_json::Value;
 use std;
+use std::process::exit;
 
 #[derive(Deserialize, Clone)]
 #[allow(dead_code)]
@@ -77,37 +80,33 @@ pub fn execute(cname_matches: &clap::ArgMatches, config: bloxconfig::Config){
     }
 }
 
-fn delete_cname(cname: String, view: String, config: bloxconfig::Config) {
-    let cname_search=format!("{}?name={}&view={}", ENDPOINT, cname, view);
+fn delete_cname(cname_search: String, view: String, config: bloxconfig::Config) {
+    let search=format!("{}?name={}&view={}", ENDPOINT, &cname_search, view);
     let r = restapi::RESTApi {
-        config: config.clone()
+        config: config
     };
-
-    match r.get(cname_search) {
-        Some(resp) => {
-            if resp.len() == 0 {
-                println!("{} not found.", cname);
-            }
-            if resp.len() == 1 {
-                for entry in resp{
-                    let cname: Cname = serde_json::from_value(entry).unwrap();
-                    let outname = cname.clone();
-                    match r.delete(cname._ref) {
-                        Ok(d_resp) => {
-                            if d_resp.is_object() {
-                                println!("Error: {}", d_resp["text"]);
-                            } else if d_resp.is_string(){
-                                println!("Success Deleted: {}", outname.name);
-                            }
-                        },
-                        Err(error) => { println!("Error: {}.", error)}
-                    }
+    let mut api_out = InfobloxResponse{ ..Default::default() };
+    api_out.process(r.get(search));
+    if api_out.count == 0 {
+        println!("Error: {} not found.", &cname_search);
+        exit(2);
+    } else {
+        let entries: Vec<Value> = api_out.response;
+        for entry in entries {
+            let cname: Cname = serde_json::from_value(entry).unwrap();
+            match r.delete(cname._ref) {
+                Ok(_val) => {
+                    println!("Deleted: {}", &cname_search);
+                },
+                Err(_err) => {
+                    println!("Error: {}", _err);
+                    exit(2);
                 }
-            } else {
-                println!("Error: Too Many Records Returned.");
+
+
+
             }
-        },
-        None => { }
+        }
     }
 }
 fn create_cname(cname: String, name: String, view: String, config: bloxconfig::Config) {
@@ -122,32 +121,32 @@ fn create_cname(cname: String, name: String, view: String, config: bloxconfig::C
     });
     let url = ENDPOINT.to_string();
 
-    match r.create(url, post_data) {
-        Ok(resp) => {
-            if resp.is_object() {
-                println!("Error: {}", resp["text"]);
-            } else if resp.is_string(){
-                println!("Success: {}", resp);
-            }
-        },
-        Err(error) => { println!("Error: {}.", error)}
+
+    let mut api_out = InfobloxResponse{ ..Default::default() };
+    api_out.process(r.create(url, post_data));
+    if api_out.is_error == true {
+        exit(2);
+    } else {
+        let entries: Vec<Value> = api_out.response;
+        for entry in entries {
+            println!("Success: {}", entry)
+        }
     }
 }
 fn get_cname(cname: String, view: String, config: bloxconfig::Config) {
-    let search=format!("{}?name~={}&view={}", ENDPOINT, cname, view);
+    let search=format!("{}?name={}&view={}", ENDPOINT, cname, view);
     let r = restapi::RESTApi {
         config: config
     };
-    match r.get(search) {
-        Some(resp) => {
-            if resp.len() == 0 {
-                println!("Error: {} not found.", cname);
-            }
-            for entry in resp{
-                let cname: Cname = serde_json::from_value(entry).unwrap();
-                println!("{}", cname);
-            }
-        },
-        None => { println!("{} not found.", cname)}
+    let mut api_out = InfobloxResponse{ ..Default::default() };
+    api_out.process(r.get(search));
+    if api_out.count == 0 {
+        println!("Error: {} not found.", cname);
+    } else {
+        let entries: Vec<Value> = api_out.response;
+        for entry in entries {
+            let cname: Cname = serde_json::from_value(entry).unwrap();
+            println!("{}", cname);
+        }
     }
 }
