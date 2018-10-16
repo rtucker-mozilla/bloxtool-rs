@@ -1,11 +1,10 @@
 name: bloxtool-rs
-version: "0.1.0"
+version: "0.0.35"
 author: Rob Tucker <rtucker@mozilla.com>
 about: CLI interface to infoblox
 subcommands:
     - record:host:
         about: act on host object
-        version: "0.1.0"
         author: Rob Tucker <rtucker@mozilla.com>
         subcommands:
             - get:
@@ -44,7 +43,6 @@ subcommands:
                         index: 2
     - record:cname:
         about: act on cname object
-        version: "0.1.0"
         author: Rob Tucker <rtucker@mozilla.com>
         subcommands:
             - get:
@@ -79,7 +77,6 @@ subcommands:
                         index: 2
     - record:a:
         about: act on address record
-        version: "0.1.0"
         author: Rob Tucker <rtucker@mozilla.com>
         args:
             - hostname:

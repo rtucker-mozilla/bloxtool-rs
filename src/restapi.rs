@@ -1,8 +1,8 @@
 use reqwest;
 use bloxconfig;
 use serde_json::Value;
-use serde_json::from_str;
 use serde_json::to_string;
+use serde_json::from_str;
 use reqwest::StatusCode;
 
 
@@ -123,13 +123,16 @@ impl RESTApi {
                         return _resp.json().unwrap();
                     },
                     StatusCode::UNAUTHORIZED => {
-                        println!("Invalid Username/Password.")
+                        println!("Error: Invalid Username/Password.")
                     },
-                    s => { println!("Unknown: {}", s) }
+                    StatusCode::NOT_IMPLEMENTED => {
+                        println!("Error: Unimplemented")
+                    },
+                    s => { println!("Error: Unknown: {}", s) }
                 }
             },
             Err(_err) => { 
-                println!("{}", _err);
+                println!("Error: {}", _err);
             }
         }
         None
@@ -195,7 +198,6 @@ impl RESTApi {
 }
 
 #[cfg(test)]
-use serde_json::from_str;
 #[test]
 fn test_trim_quotes() {
     let config = bloxconfig::Config{

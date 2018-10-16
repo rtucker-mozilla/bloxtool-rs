@@ -32,6 +32,8 @@ impl std::fmt::Display for Cname {
 const ENDPOINT: &'static str = "record:cname";
 
 // Main entry point for someone running bloxtool host <subcommand>
+// curl -u "username:password" https://<hostname>/wapi/v1.4.1/record:cname\?name\=foo.domain.com\&view\=View
+
 pub fn execute(cname_matches: &clap::ArgMatches, config: bloxconfig::Config){
     let mut cname_search = "";
     let mut view = "";
@@ -131,6 +133,17 @@ fn create_cname(cname: String, name: String, view: String, config: bloxconfig::C
     }
 }
 
+fn serialize_entries(entries: Vec<Value>) -> Vec<Cname> {
+    let entries: Vec<Value> = entries;
+    let mut return_cnames = vec![];
+    for entry in entries {
+        let cname: Cname = serde_json::from_value(entry).unwrap();
+        return_cnames.push(cname);
+    }
+    return_cnames
+
+}
+
 fn get_cname(cname: String, view: String, config: bloxconfig::Config) {
     let search=format!("{}?name={}&view={}", ENDPOINT, cname, view);
     let r = restapi::RESTApi {
@@ -141,10 +154,73 @@ fn get_cname(cname: String, view: String, config: bloxconfig::Config) {
     if api_out.count == 0 {
         println!("Error: {} not found.", cname);
     } else {
-        let entries: Vec<Value> = api_out.response;
+        let entries = serialize_entries(api_out.response);
         for entry in entries {
-            let cname: Cname = serde_json::from_value(entry).unwrap();
-            println!("{}", cname);
+            println!("{}", entry);
         }
+    }
+}
+#[cfg(test)]
+mod test_cname {
+    use bloxconfig;
+    use mockito::{Matcher, mock, reset};
+    use mockito::SERVER_URL;
+    use dirs;
+    use cname_execute::serialize_entries;
+    use restapi::InfobloxResponse;
+    use restapi;
+
+    #[test]
+    fn test_get_cname_empty () {
+        let out = r#"[]"#;
+        let home_path = dirs::home_dir().unwrap();
+        let mut config = bloxconfig::get_config(home_path);
+        let url = SERVER_URL.to_string();
+        let search=format!("record:cname?name=foo&view=Public");
+        config.host = url;
+        let mut api_out = InfobloxResponse{ ..Default::default() };
+        let r = restapi::RESTApi {
+            config: config
+        };
+        // There is a bug on windows that always sets the verb to <unknown>
+        // https://github.com/lipanski/mockito/issues/41
+        let _mock = mock("<UNKNOWN>", Matcher::Any)
+          .with_header("content-type", "application/json")
+          .with_body(out)
+          .with_status(200)
+          .create();
+        api_out.process(r.get(search));
+        let entries = serialize_entries(api_out.response);
+        assert_eq!(entries.len(), 0);
+        reset();
+    }
+    #[test]
+    fn test_get_cname_single_response () {
+        let out = r#"[{
+            "name": "foo.mozilla.com",
+            "_ref": "asfdsadf/Private",
+            "view": "Private",
+            "canonical": "mozilla.com"
+          }]"#;
+        let home_path = dirs::home_dir().unwrap();
+        let mut config = bloxconfig::get_config(home_path);
+        let url = SERVER_URL.to_string();
+        config.host = url;
+        let mut api_out = InfobloxResponse{ ..Default::default() };
+        let search=format!("record:cname?name=foo&view=Public");
+        let r = restapi::RESTApi {
+            config: config
+        };
+        // There is a bug on windows that always sets the verb to <unknown>
+        // https://github.com/lipanski/mockito/issues/41
+        let _mock = mock("<UNKNOWN>", Matcher::Any)
+          .with_header("content-type", "application/json")
+          .with_body(out)
+          .with_status(200)
+          .create();
+        api_out.process(r.get(search));
+        let entries = serialize_entries(api_out.response);
+        assert_eq!(entries.len(), 1);
+        reset();
     }
 }
