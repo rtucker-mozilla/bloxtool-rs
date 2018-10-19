@@ -13,11 +13,11 @@ matrix:
     install:
     - rustup target add x86_64-unknown-linux-musl
     rust: stable
-    env: 
-      - TARGET=x86_64-unknown-linux-musl
-      - PKG_CONFIG_ALLOW_CROSS=1
-      - BUILDARGS="--target=${TARGET}"
-      - FILENAME=bloxtool-C7-linux-x86_64
+    env:
+    - TARGET=x86_64-unknown-linux-musl
+    - PKG_CONFIG_ALLOW_CROSS=1
+    - BUILDARGS="--target=${TARGET}"
+    - FILENAME=bloxtool-C7-linux-x86_64
     dist: trusty
     sudo: required
   - os: osx
@@ -25,19 +25,17 @@ matrix:
     script:
     - cargo build --release
     env:
-      - FILENAME=bloxtool-osx-x86_64
-      - BUILDARGS=""
+    - FILENAME=bloxtool-osx-x86_64
+    - BUILDARGS=""
 deploy:
-  skip_cleanup: true
   provider: releases
   api_key:
-    secure: FUXxh+M7eldAbJr+IacSiGDN5D1vKa8RSbGZq+udmqXUZZUOrxOTdi0QjNcXD1fEXEXz9nM9Tw4uLG15WTF8CNIGvViKx5tDgr2YATqtuSWctuiLK5WBoCir/3uAS+neuOkJ7TQOOTh+BQJ/AwlbDTN/UEi+V1ZrAimbJqKooix1xsgRXEWHWMc2Q7EnECBMudzDbb83+yVDgKZp+ObcF2rdkEzfMQ7viUY29LazFJt3AL6mq/vVJ18BtlHPmdyMsqu3MOGvw4hgyYXy8/DPl3n+DvN+qmc184zdbTU5Hqj9ngyCCepu7z9s/Of2zy8QefCTwBia+kl/nmWCa+4U9N699sugex6X0x0J7EdLge6KLJ/jN2qG7xAq7LKFCk7py3eStWdftvzatBZS42m5elgUI6LiHKEJ/9lDrn+OquJKVfoiSGtbyPnyz2jB8MzZ9/rOs8mLCeJOb9zpRoBLzzjs89CyZE//qlNC2zIP39WyNpauLatB+IdnffPWQdKKv5Bwx8p5vDjI3szdUzmTJbOm7tRoQlS9VPMPdPSQ+k7+P3uNaZhz4OgbfbW1kzbu5znrE0T4gpIEFYLfRDNWNiPb4knh6s2oAnK1CeHtGY8PtpnufSLAidHZegsSnuBQ75Fq10VD3cHwegENNaDBSR4qZpSzPEVMHjJ8WKEMhE8=
-  file_glob: true
+    secure: UeQU79XUL+2BWKZ0Po8ejc5yIO1katSXilTOVFkeGnE/mEB8eJgoY+R/doUPgqbjsgHaOkPDwUUO480+oZPvEAwlrpGHQZe56IMIVZy936HBJqtLkcV4CQN71eJzh3Jrwf7BYnNfm7R9pBCfbxSWJnPXIMZmdLlwvm7XO6Q6NnYMfvrjIynpev83+DloFUUYCAPRwSkxxWkt1BilrE5my5vTo5+ABwlXB1zFf/CnaoB0Q6qD242+nAm7jhuasMWTk8/Tx8IdkZlR4ZezDtQUqnu1gBCIoDHDzXUwixfMzbNSaYb3JXphxKZWABDOdMxr9mrPV+KrGFTIF2pGa/0vl1APcrj+D0IlP4eIO0xrrzSPW5W657veYO19pYlPVWnzKd70iefhhVtZC0LRPOQcTmwEzcIbDWrpkhed1uNOlUUHl+9oSkLY1WK85bNfoNPxU7NejfMFkB0n2s42KQHQ+cIB9kMuJ7ZCJbNcPPJVJH5DT3b/H8wj5wjyRQfU9STFAjtQvKx98JiAsumzPelpPmmPTrCnhRgDlSnphwnqUlhmQh10jmGTN6KlKKPaTmUMzUZUHUB7g7N+0GPucUy/bQ9do4831fHsM9bjgsk25isfY3rwyyfIpvE5B/cgnFeaOMExaCPG0fOAyjspskK8kKyspNN/w2e8SMZfkoOld84=
   file: target/release/${FILENAME}
   on:
-    tags: true
+    repo: rtucker-mozilla/bloxtool-rs
 before_deploy:
-  - mv target/${TARGET}/release/bloxtool target/release/${FILENAME}
+- mv target/${TARGET}/release/bloxtool target/release/${FILENAME}
 notifications:
   email:
     on_success: never
