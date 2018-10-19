@@ -165,7 +165,6 @@ mod test_cname {
     use bloxconfig;
     use mockito::{Matcher, mock, reset};
     use mockito::SERVER_URL;
-    use dirs;
     use cname_execute::serialize_entries;
     use restapi::InfobloxResponse;
     use restapi;
@@ -173,18 +172,24 @@ mod test_cname {
     #[test]
     fn test_get_cname_empty () {
         let out = r#"[]"#;
-        let home_path = dirs::home_dir().unwrap();
-        let mut config = bloxconfig::get_config(home_path);
         let url = SERVER_URL.to_string();
+        let config = bloxconfig::Config{
+            username: "admin".to_string(),
+            password: "password".to_string(),
+            host: url
+        };
         let search=format!("record:cname?name=foo&view=Public");
-        config.host = url;
         let mut api_out = InfobloxResponse{ ..Default::default() };
         let r = restapi::RESTApi {
             config: config
         };
         // There is a bug on windows that always sets the verb to <unknown>
         // https://github.com/lipanski/mockito/issues/41
-        let _mock = mock("<UNKNOWN>", Matcher::Any)
+        let mut verb = "get";
+        if cfg!(windows) {
+            verb = "<UNKNOWN>";
+        }
+        let _mock = mock(verb, Matcher::Any)
           .with_header("content-type", "application/json")
           .with_body(out)
           .with_status(200)
@@ -202,10 +207,12 @@ mod test_cname {
             "view": "Private",
             "canonical": "mozilla.com"
           }]"#;
-        let home_path = dirs::home_dir().unwrap();
-        let mut config = bloxconfig::get_config(home_path);
         let url = SERVER_URL.to_string();
-        config.host = url;
+        let config = bloxconfig::Config{
+            username: "admin".to_string(),
+            password: "password".to_string(),
+            host: url
+        };
         let mut api_out = InfobloxResponse{ ..Default::default() };
         let search=format!("record:cname?name=foo&view=Public");
         let r = restapi::RESTApi {
@@ -213,7 +220,11 @@ mod test_cname {
         };
         // There is a bug on windows that always sets the verb to <unknown>
         // https://github.com/lipanski/mockito/issues/41
-        let _mock = mock("<UNKNOWN>", Matcher::Any)
+        let mut verb = "get";
+        if cfg!(windows) {
+            verb = "<UNKNOWN>";
+        }
+        let _mock = mock(verb, Matcher::Any)
           .with_header("content-type", "application/json")
           .with_body(out)
           .with_status(200)
