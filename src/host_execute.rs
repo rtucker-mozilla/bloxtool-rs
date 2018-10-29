@@ -1,9 +1,11 @@
 use clap;
 use bloxconfig;
 use restapi;
+use restapi::InfobloxResponse;
 use serde_json;
+use serde_json::Value;
 use std;
-
+use std::process::exit;
 
 #[derive(Deserialize)]
 #[allow(dead_code)]
@@ -13,7 +15,11 @@ struct Ipv4addr {
     #[serde(default)]
     mac: String,
     #[serde(default)]
+    host: String,
+    #[serde(default)]
     ipv4addr: String,
+    #[serde(default)]
+    configure_for_dhcp: bool,
 }
 
 #[derive(Deserialize)]
@@ -85,75 +91,65 @@ pub fn execute(host_matches: &clap::ArgMatches, config: bloxconfig::Config){
         delete_host(host_search.to_string(), view.to_string(), config.clone());
     }
 }
-fn delete_host(host: String, view: String, config: bloxconfig::Config) {
-    let search=format!("{}?name={}&view={}", ENDPOINT, host, view);
-    let url = format!("{}/{}", &config.full_path(), search);
-    let r = restapi::RESTApi {
-        url: url,
-        config: config.clone()
-    };
-    match r.get() {
-        Some(resp) => {
-            for entry in resp{
-                let host: Host = serde_json::from_value(entry).unwrap();
-                println!("delete {}", host);
-            }
-        },
-        None => { }
-    }
 
-    /*
-    match r.delete_object() {
-        // need to decide how to reformat the url here for delete
-        Some(_status) => { println!("deleted")},
-        None => { println!("Error=Not Found." )}
+fn serialize_entries(entries: Vec<Value>) -> Vec<Host> {
+    let entries: Vec<Value> = entries;
+    let mut return_hosts = vec![];
+    for entry in entries {
+        let host: Host = serde_json::from_value(entry).unwrap();
+        return_hosts.push(host);
     }
-    */
+    return_hosts
+
 }
 
-/*
-fn get_host(hostname: String, view: String, config: bloxconfig::Config) {
-    let search=format!("{}?name~={}&view={}", ENDPOINT, hostname, view);
-    let url = format!("{}/{}", config.full_path(), search);
+fn delete_host(host_search: String, view: String, config: bloxconfig::Config) {
+    let search=format!("{}?name={}&view={}", ENDPOINT, &host_search, view);
     let r = restapi::RESTApi {
-        url: url,
         config: config
     };
-    match r.get_object() {
-        Some(resp) => {
-            for obj in resp.json {
-                let c: Host = serde_json::from_value(obj).unwrap();
-                println!("{}", c);
+    let mut api_out = InfobloxResponse{ ..Default::default() };
+    api_out.process(r.get(search));
+    if api_out.count == 0 {
+        println!("Error: {} not found.", &host_search);
+        exit(2);
+    } else {
+        let entries: Vec<Value> = api_out.response;
+        for entry in entries {
+            let host: Host = serde_json::from_value(entry).unwrap();
+            match r.delete(host._ref) {
+                Ok(_val) => {
+                    println!("Success: Deleted {}", &host_search);
+                },
+                Err(_err) => {
+                    println!("Error: {}", _err);
+                    exit(2);
+                }
             }
-        },
-        None => { println!("Not Found.") }
+        }
     }
 }
-*/
+
 
 fn get_host(hostname: String, view: String, config: bloxconfig::Config) {
-    let search=format!("{}?name~={}&view={}", ENDPOINT, hostname, view);
-    let url = format!("{}/{}", config.full_path(), search);
+    let search=format!("{}?name={}&view={}", ENDPOINT, hostname, view);
     let r = restapi::RESTApi {
-        url: url,
         config: config
     };
-    match r.get() {
-        Some(resp) => {
-            println!("{}", resp.len());
-            for entry in resp{
-                let host: Host = serde_json::from_value(entry).unwrap();
-                println!("{}", host);
-            }
-        },
-        None => { println!("Not Found.") }
+    let mut api_out = InfobloxResponse{ ..Default::default() };
+    api_out.process(r.get(search));
+    if api_out.count == 0 {
+        println!("Error: {} not found.", hostname);
+    } else {
+        let entries = serialize_entries(api_out.response);
+        for entry in entries {
+            println!("{}", entry);
+        }
     }
 }
 
 fn create_host(hostname: String, ipv4addr: String, view: String, mac: String, config: bloxconfig::Config) {
-    let url = format!("{}/{}", config.full_path(), ENDPOINT);
     let r = restapi::RESTApi {
-        url: url,
         config: config
     };
 
@@ -172,10 +168,109 @@ fn create_host(hostname: String, ipv4addr: String, view: String, mac: String, co
         "view": view,
     });
 
-    r.create_object(post_data);
+    let url = ENDPOINT.to_string();
+    let mut api_out = InfobloxResponse{ ..Default::default() };
+    api_out.process(r.create(url, post_data));
+
+    if api_out.is_error == true {
+        exit(2);
+    } else {
+        let entries: Vec<Value> = api_out.response;
+        for entry in entries {
+            println!("Success: {}", entry)
+        }
+    }
+
 }
 
-#[test]
-fn test_count_results_empty() {
-    assert_eq!(0, 0);
+#[cfg(test)]
+mod test_host {
+    use bloxconfig;
+    use mockito::{Matcher, mock, reset};
+    use mockito::SERVER_URL;
+    use host_execute::serialize_entries;
+    use restapi::InfobloxResponse;
+    use restapi;
+
+    #[test]
+    fn test_get_host_empty () {
+        let out = r#"[]"#;
+        let url = SERVER_URL.to_string();
+        let config = bloxconfig::Config{
+            username: "admin".to_string(),
+            password: "password".to_string(),
+            host: url
+        };
+        let search=format!("record:host?name=foo&view=Public");
+        let mut api_out = InfobloxResponse{ ..Default::default() };
+        let r = restapi::RESTApi {
+            config: config
+        };
+        // There is a bug on windows that always sets the verb to <unknown>
+        // https://github.com/lipanski/mockito/issues/41
+        let mut verb = "get";
+        if cfg!(windows) {
+            verb = "<UNKNOWN>";
+        }
+        let _mock = mock(verb, Matcher::Any)
+          .with_header("content-type", "application/json")
+          .with_body(out)
+          .with_status(200)
+          .create();
+        api_out.process(r.get(search));
+        let entries = serialize_entries(api_out.response);
+        assert_eq!(entries.len(), 0);
+        reset();
+    }
+    #[test]
+    fn test_get_host_single_response () {
+        let out = r#"[
+    {
+        "_ref": "record:host/ZG5zLmhvc3QkLjE1LmNvbS5tb3ppbGxhLm1kYzEucHJpdmF0ZS5ydHVja2Vy:foo.mozilla.com/Private",
+        "ipv4addrs": [
+            {
+                "_ref": "record:host_ipv4addr/ZG5zLmhvc3RfYWRkcmVzcyQuMTUuY29tLm1vemlsbGEubWRjMS5wcml2YXRlLnJ0dWNrZXIuMTAuNDguNzUuMjAyLg:10.0.0.1/foo.mozilla.com/Private",
+                "configure_for_dhcp": false,
+                "host": "foo.mozilla.com",
+                "ipv4addr": "10.0.0.1"
+            }
+        ],
+        "name": "foo.mozilla.com",
+        "view": "Private"
+    }
+]"#;
+        let url = SERVER_URL.to_string();
+        let config = bloxconfig::Config{
+            username: "admin".to_string(),
+            password: "password".to_string(),
+            host: url
+        };
+        let mut api_out = InfobloxResponse{ ..Default::default() };
+        let search=format!("record:host?name=foo&view=Public");
+        let r = restapi::RESTApi {
+            config: config
+        };
+        // There is a bug on windows that always sets the verb to <unknown>
+        // https://github.com/lipanski/mockito/issues/41
+        let mut verb = "get";
+        if cfg!(windows) {
+            verb = "<UNKNOWN>";
+        }
+        let _mock = mock(verb, Matcher::Any)
+          .with_header("content-type", "application/json")
+          .with_body(out)
+          .with_status(200)
+          .create();
+        api_out.process(r.get(search));
+        let entries = serialize_entries(api_out.response);
+        assert_eq!(entries.len(), 1);
+        assert_eq!(entries[0].name, "foo.mozilla.com");
+        assert_eq!(entries[0].view, "Private");
+        assert_eq!(entries[0]._ref, "record:host/ZG5zLmhvc3QkLjE1LmNvbS5tb3ppbGxhLm1kYzEucHJpdmF0ZS5ydHVja2Vy:foo.mozilla.com/Private");
+        assert_eq!(entries[0].ipv4addrs[0]._ref, "record:host_ipv4addr/ZG5zLmhvc3RfYWRkcmVzcyQuMTUuY29tLm1vemlsbGEubWRjMS5wcml2YXRlLnJ0dWNrZXIuMTAuNDguNzUuMjAyLg:10.0.0.1/foo.mozilla.com/Private");
+        assert_eq!(entries[0].ipv4addrs[0].ipv4addr, "10.0.0.1");
+        assert_eq!(entries[0].ipv4addrs[0].host, "foo.mozilla.com");
+        assert_eq!(entries[0].ipv4addrs[0].configure_for_dhcp, false);
+        reset();
+    }
 }
