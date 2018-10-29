@@ -37,8 +37,6 @@ deploy:
   api_key:
     secure: UeQU79XUL+2BWKZ0Po8ejc5yIO1katSXilTOVFkeGnE/mEB8eJgoY+R/doUPgqbjsgHaOkPDwUUO480+oZPvEAwlrpGHQZe56IMIVZy936HBJqtLkcV4CQN71eJzh3Jrwf7BYnNfm7R9pBCfbxSWJnPXIMZmdLlwvm7XO6Q6NnYMfvrjIynpev83+DloFUUYCAPRwSkxxWkt1BilrE5my5vTo5+ABwlXB1zFf/CnaoB0Q6qD242+nAm7jhuasMWTk8/Tx8IdkZlR4ZezDtQUqnu1gBCIoDHDzXUwixfMzbNSaYb3JXphxKZWABDOdMxr9mrPV+KrGFTIF2pGa/0vl1APcrj+D0IlP4eIO0xrrzSPW5W657veYO19pYlPVWnzKd70iefhhVtZC0LRPOQcTmwEzcIbDWrpkhed1uNOlUUHl+9oSkLY1WK85bNfoNPxU7NejfMFkB0n2s42KQHQ+cIB9kMuJ7ZCJbNcPPJVJH5DT3b/H8wj5wjyRQfU9STFAjtQvKx98JiAsumzPelpPmmPTrCnhRgDlSnphwnqUlhmQh10jmGTN6KlKKPaTmUMzUZUHUB7g7N+0GPucUy/bQ9do4831fHsM9bjgsk25isfY3rwyyfIpvE5B/cgnFeaOMExaCPG0fOAyjspskK8kKyspNN/w2e8SMZfkoOld84=
   file: target/release/${FILENAME}
-  on:
-    repo: rtucker-mozilla/bloxtool-rs
 before_deploy:
 - mv target/${TARGET}/release/bloxtool target/release/${FILENAME}
 notifications:
