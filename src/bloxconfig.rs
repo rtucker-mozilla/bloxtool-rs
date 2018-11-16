@@ -1,7 +1,7 @@
 use ini::Ini;
 use std::path::PathBuf;
 use std::process;
-static VERSION: &'static str = "1.4.1";
+static VERSION: &'static str = "2.6";
 
 #[derive(Clone)]
 pub struct Config {
