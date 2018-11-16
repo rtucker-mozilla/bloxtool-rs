@@ -78,8 +78,36 @@ subcommands:
     - record:a:
         about: act on address record
         author: Rob Tucker <rtucker@mozilla.com>
-        args:
-            - hostname:
-                short: n
-                value_name: hostname
-                help: Host object
+        about: act on cname object
+        author: Rob Tucker <rtucker@mozilla.com>
+        subcommands:
+            - get:
+                help: Get Address Record Object
+                args:
+                    - address_record:
+                        required: true
+                        index: 1
+                    - view:
+                        required: true
+                        index: 2
+            - create:
+                help: Create Address Record Object
+                args:
+                    - address_record:
+                        required: true
+                        index: 1
+                    - ip_address:
+                        required: true
+                        index: 2
+                    - view:
+                        required: true
+                        index: 3
+            - delete:
+                help: Delete Address Record Object
+                args:
+                    - address_record:
+                        required: true
+                        index: 1
+                    - view:
+                        required: true
+                        index: 2

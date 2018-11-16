@@ -16,6 +16,7 @@ extern crate serde_derive;
 mod bloxconfig;
 mod host_execute;
 mod cname_execute;
+mod a_execute;
 mod restapi;
 use clap::App;
 
@@ -32,6 +33,11 @@ fn main() {
 
     match matches.subcommand_matches("record:cname") {
         Some(value) => { cname_execute::execute(value, config.clone()) },
+        None => {}
+    }
+
+    match matches.subcommand_matches("record:a") {
+        Some(value) => { a_execute::execute(value, config.clone()) },
         None => {}
     }
 }
