@@ -18,6 +18,7 @@ mod host_execute;
 mod cname_execute;
 mod a_execute;
 mod txt_execute;
+mod mx_execute;
 mod restapi;
 use clap::App;
 
@@ -44,6 +45,11 @@ fn main() {
 
     match matches.subcommand_matches("record:txt") {
         Some(value) => { txt_execute::execute(value, config.clone()) },
+        None => {}
+    }
+
+    match matches.subcommand_matches("record:mx") {
+        Some(value) => { mx_execute::execute(value, config.clone()) },
         None => {}
     }
 }

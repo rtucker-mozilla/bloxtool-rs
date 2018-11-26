@@ -1,5 +1,5 @@
 name: bloxtool-rs
-version: "0.0.50"
+version: "0.0.51"
 author: Rob Tucker <rtucker@mozilla.com>
 about: CLI interface to infoblox
 subcommands:
@@ -143,3 +143,46 @@ subcommands:
                     - view:
                         required: true
                         index: 2
+    - record:mx:
+        about: act on mx object
+        author: Rob Tucker <rtucker@mozilla.com>
+        subcommands:
+            - get:
+                help: Get MX Records by Destination
+                args:
+                    - name:
+                        required: true
+                        index: 1
+                    - view:
+                        required: true
+                        index: 2
+            - create:
+                help: Create MX Object
+                args:
+                    - name:
+                        required: true
+                        index: 1
+                    - mail_exchanger:
+                        required: true
+                        index: 2
+                    - preference:
+                        required: true
+                        index: 3
+                    - view:
+                        required: true
+                        index: 4
+            - delete:
+                help: Delete MX Object
+                args:
+                    - name:
+                        required: true
+                        index: 1
+                    - mail_exchanger:
+                        required: true
+                        index: 2
+                    - preference:
+                        required: true
+                        index: 3
+                    - view:
+                        required: true
+                        index: 4

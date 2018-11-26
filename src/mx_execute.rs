@@ -9,96 +9,113 @@ use std::process::exit;
 
 #[derive(Deserialize, Clone)]
 #[allow(dead_code)]
-struct TxtRecordResponse {
-    objects: Vec<TxtRecord>
+struct MXResponse {
+    objects: Vec<MX>
 }
 
 #[derive(Deserialize)]
 #[allow(dead_code)]
 #[derive(Clone)]
-struct TxtRecord {
+struct MX {
     _ref: String,
+    mail_exchanger: String,
     name: String,
-    text: String,
+    preference: u16,
     view: String,
 }
 
-impl std::fmt::Display for TxtRecord {
+impl std::fmt::Display for MX {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-        write!(f, "_ref={} name={} text={} view={}", self._ref, self.name, self.text, self.view)
+        write!(f, "_ref={} name={} mail_exchanger={} preference={} view={}", self._ref, self.name, self.mail_exchanger, self.preference, self.view)
     }
 }
 
-const ENDPOINT: &'static str = "record:txt";
+const ENDPOINT: &'static str = "record:mx";
 
-// Main entry point for someone running bloxtool host <subcommand>
-// curl -u "username:password" https://<hostname>/wapi/v1.4.1/record:a\?name\=foo.domain.com\&view\=View
+// Main entry point for someone running bloxtool record:mx <subcommand>
+// curl -u "username:password" https://<hostname>/wapi/v2.9/record:mx\?name\=foo.domain.com\&view\=View
 
-pub fn execute(txt_record_matches: &clap::ArgMatches, config: bloxconfig::Config){
-    let mut txt_record_search = "";
+pub fn execute(mx_matches: &clap::ArgMatches, config: bloxconfig::Config){
+    let mut name = "";
+    let mut mail_exchanger = "";
+    let mut preference = 0;
     let mut view = "";
     // executed when someone does bloxtool host get <hostname> <view>
-    if let Some(_get_matches) = txt_record_matches.subcommand_matches("get") {
-        match _get_matches.value_of("txt_record"){
-            Some(value) => { txt_record_search = value },
-            None => println!("TXT Record Required")
+    if let Some(_get_matches) = mx_matches.subcommand_matches("get") {
+        match _get_matches.value_of("name"){
+            Some(value) => { name = value },
+            None => println!("name Required")
         }
+
         match _get_matches.value_of("view"){
             Some(value) => { view = value },
             None => println!("View Required")
         }
-        get_txt_record(txt_record_search.to_string(), view.to_string(), config.clone());
+        get_mx(name.to_string(), view.to_string(), config.clone());
     }
 
-    if let Some(_get_matches) = txt_record_matches.subcommand_matches("create") {
-        let mut txt_record_search = "";
-        let mut text = "";
-        let mut view = "";
-        match _get_matches.value_of("txt_record"){
-            Some(value) => { txt_record_search = value },
-            None => println!("txt_record Required")
+    if let Some(_get_matches) = mx_matches.subcommand_matches("create") {
+        match _get_matches.value_of("name"){
+            Some(value) => { name = value },
+            None => println!("name Required")
         }
-        match _get_matches.value_of("text"){
-            Some(value) => { text = value },
-            None => println!("Text Required")
+        match _get_matches.value_of("mail_exchanger"){
+            Some(value) => { mail_exchanger = value },
+            None => println!("mail_exchanger Required")
         }
+
+        match _get_matches.value_of("preference"){
+            Some(value) => { preference = value.parse::<u16>().unwrap() },
+            None => println!("preference Required")
+        }
+
         match _get_matches.value_of("view"){
             Some(value) => { view = value },
             None => println!("View Required")
         }
-        create_txt_record(txt_record_search.to_string(), text.to_string(), view.to_string(), config.clone());
+        create_mx(name.to_string(), mail_exchanger.to_string(), preference, view.to_string(), config.clone());
     }
 
-    if let Some(_get_matches) = txt_record_matches.subcommand_matches("delete") {
-        match _get_matches.value_of("txt_record"){
-            Some(value) => { txt_record_search = value },
-            None => println!("TXT Record Required")
+    if let Some(_get_matches) = mx_matches.subcommand_matches("delete") {
+        match _get_matches.value_of("name"){
+            Some(value) => { name = value },
+            None => println!("name Required")
         }
+        match _get_matches.value_of("mail_exchanger"){
+            Some(value) => { mail_exchanger = value },
+            None => println!("mail_exchanger Required")
+        }
+
+        match _get_matches.value_of("preference"){
+            Some(value) => { preference = value.parse::<u16>().unwrap() },
+            None => println!("preference Required")
+        }
+
         match _get_matches.value_of("view"){
             Some(value) => { view = value },
             None => println!("View Required")
         }
-        delete_txt_record(txt_record_search.to_string(), view.to_string(), config.clone());
+        delete_mx(name.to_string(), mail_exchanger.to_string(), preference, view.to_string(), config.clone());
     }
 }
 
-fn delete_txt_record(txt_record_search: String, view: String, config: bloxconfig::Config) {
-    let search=format!("{}?name={}&view={}", ENDPOINT, &txt_record_search, view);
+fn delete_mx(name: String, mail_exchanger: String, preference: u16, view: String, config: bloxconfig::Config) {
+    let search=format!("{}?name={}&mail_exchanger={}&preference={}&view={}", ENDPOINT, &name, &mail_exchanger, &preference, view);
     let r = restapi::RESTApi {
         config: config
     };
     let mut api_out = InfobloxResponse{ ..Default::default() };
     api_out.process(r.get(search));
     if api_out.count == 0 {
-        println!("Error: {} not found.", &txt_record_search);
+        println!("Error: {} not found.", &name);
         exit(2);
     } else {
         let entries: Vec<Value> = api_out.response;
         for entry in entries {
-            let txt_record: TxtRecord = serde_json::from_value(entry).unwrap();
-            match r.delete(txt_record._ref) {
+            let mx: MX = serde_json::from_value(entry).unwrap();
+            match r.delete(mx._ref) {
                 Ok(_val) => {
-                    println!("Success: Deleted {}", &txt_record_search);
+                    println!("Success: Deleted {}", &name);
                 },
                 Err(_err) => {
                     println!("Error: {}", _err);
@@ -109,16 +126,18 @@ fn delete_txt_record(txt_record_search: String, view: String, config: bloxconfig
     }
 }
 
-fn create_txt_record(txt_record: String, text: String, view: String, config: bloxconfig::Config) {
+fn create_mx(name: String, mail_exchanger: String, preference: u16, view: String, config: bloxconfig::Config) {
     let r = restapi::RESTApi {
         config: config
     };
 
     let post_data = json!({
-        "name": txt_record,
-        "text": text,
+        "name": name,
+        "mail_exchanger": mail_exchanger,
+        "preference": preference,
         "view": view,
     });
+
     let url = ENDPOINT.to_string();
 
     let mut api_out = InfobloxResponse{ ..Default::default() };
@@ -133,26 +152,26 @@ fn create_txt_record(txt_record: String, text: String, view: String, config: blo
     }
 }
 
-fn serialize_entries(entries: Vec<Value>) -> Vec<TxtRecord> {
+fn serialize_entries(entries: Vec<Value>) -> Vec<MX> {
     let entries: Vec<Value> = entries;
-    let mut return_txt_records = vec![];
+    let mut return_mx = vec![];
     for entry in entries {
-        let txt_record: TxtRecord = serde_json::from_value(entry).unwrap();
-        return_txt_records.push(txt_record);
+        let mx: MX = serde_json::from_value(entry).unwrap();
+        return_mx.push(mx);
     }
-    return_txt_records
+    return_mx
 
 }
 
-fn get_txt_record(txt_record: String, view: String, config: bloxconfig::Config) {
-    let search=format!("{}?name={}&view={}", ENDPOINT, txt_record, view);
+fn get_mx(name: String, view: String, config: bloxconfig::Config) {
+    let search=format!("{}?name={}&view={}", ENDPOINT, name, view);
     let r = restapi::RESTApi {
         config: config
     };
     let mut api_out = InfobloxResponse{ ..Default::default() };
     api_out.process(r.get(search));
     if api_out.count == 0 {
-        println!("Error: {} not found.", txt_record);
+        println!("Error: {} not found.", name);
     } else {
         let entries = serialize_entries(api_out.response);
         for entry in entries {
@@ -161,16 +180,16 @@ fn get_txt_record(txt_record: String, view: String, config: bloxconfig::Config) 
     }
 }
 #[cfg(test)]
-mod test_wtxt {
+mod test_mx {
     use bloxconfig;
     use mockito::{Matcher, mock, reset};
     use mockito::SERVER_URL;
-    use txt_execute::serialize_entries;
+    use mx_execute::serialize_entries;
     use restapi::InfobloxResponse;
     use restapi;
 
     #[test]
-    fn test_get_txt_record_empty () {
+    fn test_get_mx_empty () {
         let out = r#"[]"#;
         let url = SERVER_URL.to_string();
         let config = bloxconfig::Config{
@@ -178,7 +197,7 @@ mod test_wtxt {
             password: "password".to_string(),
             host: url
         };
-        let search=format!("record:txt?name=foo&view=Public");
+        let search=format!("record:mx?name=foo&view=Public");
         let mut api_out = InfobloxResponse{ ..Default::default() };
         let r = restapi::RESTApi {
             config: config
@@ -200,12 +219,13 @@ mod test_wtxt {
         reset();
     }
     #[test]
-    fn test_get_txt_record_single_response () {
+    fn test_get_mx_single_response () {
         let out = r#"[{
             "name": "foo.mozilla.com",
+            "mail_exchanger": "smtp.mozilla.com",
+            "preference": 11,
             "_ref": "asfdsadf/Private",
-            "view": "Private",
-            "text": "thetext"
+            "view": "Private"
           }]"#;
         let url = SERVER_URL.to_string();
         let config = bloxconfig::Config{
@@ -214,7 +234,7 @@ mod test_wtxt {
             host: url
         };
         let mut api_out = InfobloxResponse{ ..Default::default() };
-        let search=format!("record:a?name=foo&view=Public");
+        let search=format!("record:cname?name=foo&view=Public");
         let r = restapi::RESTApi {
             config: config
         };
@@ -232,6 +252,9 @@ mod test_wtxt {
         api_out.process(r.get(search));
         let entries = serialize_entries(api_out.response);
         assert_eq!(entries.len(), 1);
+        let entry = &entries[0];
+        assert_eq!(entry.name, "foo.mozilla.com");
+        assert_eq!(entry.preference, 11);
         reset();
     }
 }
