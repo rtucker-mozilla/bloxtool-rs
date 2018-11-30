@@ -16,7 +16,7 @@ struct TxtRecordResponse {
 #[derive(Deserialize)]
 #[allow(dead_code)]
 #[derive(Clone)]
-struct TxtRecord {
+pub struct TxtRecord {
     _ref: String,
     name: String,
     text: String,

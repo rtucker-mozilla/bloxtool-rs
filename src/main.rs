@@ -19,6 +19,7 @@ mod cname_execute;
 mod a_execute;
 mod txt_execute;
 mod mx_execute;
+mod search_execute;
 mod restapi;
 use clap::App;
 
@@ -50,6 +51,11 @@ fn main() {
 
     match matches.subcommand_matches("record:mx") {
         Some(value) => { mx_execute::execute(value, config.clone()) },
+        None => {}
+    }
+
+    match matches.subcommand_matches("search") {
+        Some(value) => { search_execute::execute(value, config.clone()) },
         None => {}
     }
 }

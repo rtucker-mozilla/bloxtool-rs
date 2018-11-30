@@ -16,7 +16,7 @@ struct CnameResponse {
 #[derive(Deserialize)]
 #[allow(dead_code)]
 #[derive(Clone)]
-struct Cname {
+pub struct Cname {
     _ref: String,
     canonical: String,
     name: String,

@@ -1,5 +1,5 @@
 name: bloxtool-rs
-version: "0.0.51"
+version: "0.0.52"
 author: Rob Tucker <rtucker@mozilla.com>
 about: CLI interface to infoblox
 subcommands:
@@ -186,3 +186,15 @@ subcommands:
                     - view:
                         required: true
                         index: 4
+    - search:
+        about: global search
+        author: Rob Tucker <rtucker@mozilla.com>
+        args:
+            - search_string:
+                required: true
+                index: 1
+            - objtype:
+                value_name: objtype
+                help: Limit search to this objtype
+                long: objtype
+                takes_value: true

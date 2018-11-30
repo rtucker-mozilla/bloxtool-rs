@@ -16,7 +16,7 @@ struct MXResponse {
 #[derive(Deserialize)]
 #[allow(dead_code)]
 #[derive(Clone)]
-struct MX {
+pub struct MX {
     _ref: String,
     mail_exchanger: String,
     name: String,

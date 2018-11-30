@@ -25,7 +25,7 @@ struct Ipv4addr {
 #[derive(Deserialize)]
 #[allow(dead_code)]
 #[derive(Clone)]
-struct Host {
+pub struct Host {
     _ref: String,
     name: String,
     ipv4addrs: Vec<Ipv4addr>,

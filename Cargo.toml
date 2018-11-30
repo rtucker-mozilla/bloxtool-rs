@@ -1,6 +1,6 @@
 [package]
 name = "bloxtool"
-version = "0.0.51"
+version = "0.0.52"
 include = ["src/*"]
 
 [dependencies]

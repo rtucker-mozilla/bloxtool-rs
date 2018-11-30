@@ -16,7 +16,7 @@ struct AddressRecordResponse {
 #[derive(Deserialize)]
 #[allow(dead_code)]
 #[derive(Clone)]
-struct AddressRecord {
+pub struct AddressRecord {
     _ref: String,
     ipv4addr: String,
     name: String,
