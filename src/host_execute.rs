@@ -10,6 +10,21 @@ use std::process::exit;
 #[derive(Deserialize)]
 #[allow(dead_code)]
 #[derive(Clone)]
+struct Ipv6addr {
+    _ref: String,
+    #[serde(default)]
+    mac: String,
+    #[serde(default)]
+    host: String,
+    #[serde(default)]
+    ipv6addr: String,
+    #[serde(default)]
+    configure_for_dhcp: bool,
+}
+
+#[derive(Deserialize)]
+#[allow(dead_code)]
+#[derive(Clone)]
 struct Ipv4addr {
     _ref: String,
     #[serde(default)]
@@ -28,12 +43,44 @@ struct Ipv4addr {
 pub struct Host {
     _ref: String,
     name: String,
+    #[serde(default)]
     ipv4addrs: Vec<Ipv4addr>,
+    #[serde(default)]
+    ipv6addrs: Vec<Ipv6addr>,
     view: String,
+}
+impl Host {
+    fn build_display_string(&self) -> String {
+        let ref_string = format!("_ref={}", self._ref);
+        let name_string = format!("name={}", self.name);
+        let view_string = format!("view={}", self.view);
+        let mut outvec = vec![ref_string, name_string];
+
+        if self.ipv4addrs.len() > 0 {
+            let ipv4str = format!("ipv4addr={}", self.ipv4addrs[0].ipv4addr);
+            outvec.push(ipv4str.to_string());
+            if self.ipv4addrs[0].mac != "" {
+                let ipv4macstr = format!("ipv4mac={}", self.ipv4addrs[0].mac);
+                outvec.push(ipv4macstr.to_string());
+            }
+        }
+        if self.ipv6addrs.len() > 0 {
+            let ipv6str = format!("ipv6addr={}", self.ipv6addrs[0].ipv6addr);
+            outvec.push(ipv6str.to_string());
+            if self.ipv4addrs[0].mac != "" {
+                let ipv4macstr = format!("ipv4mac={}", self.ipv4addrs[0].mac);
+                outvec.push(ipv4macstr.to_string());
+            }
+        }
+        outvec.push(view_string);
+        return outvec.join(" ");
+    }
+
 }
 impl std::fmt::Display for Host {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-        write!(f, "_ref={} name={} view={}", self._ref, self.name, self.view)
+        let outstring = self.build_display_string();
+        write!(f, "{}", outstring)
     }
 }
 
