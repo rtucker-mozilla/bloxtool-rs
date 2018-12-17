@@ -92,7 +92,16 @@ pub fn execute(host_matches: &clap::ArgMatches, config: bloxconfig::Config){
     let mut host_search = "";
     let mut view = "";
     let mut ipv4addr = "";
+    let mut search_string = "";
     // executed when someone does bloxtool host get <hostname> <view>
+    if let Some(_get_matches) = host_matches.subcommand_matches("search") {
+        match _get_matches.value_of("search_string"){
+            Some(value) => { search_string = value },
+            None => println!("Search String Required")
+        }
+        let search=format!("{}?{}", ENDPOINT, search_string);
+        get_host(&search, view.to_string(), config.clone());
+    }
     if let Some(_get_matches) = host_matches.subcommand_matches("get") {
         match _get_matches.value_of("hostname"){
             Some(value) => { host_search = value },
@@ -102,7 +111,8 @@ pub fn execute(host_matches: &clap::ArgMatches, config: bloxconfig::Config){
             Some(value) => { view = value },
             None => println!("View Required")
         }
-        get_host(host_search.to_string(), view.to_string(), config.clone());
+        let search=format!("{}?name={}&view={}", ENDPOINT, host_search, view);
+        get_host(&search, view.to_string(), config.clone());
     }
 
     if let Some(_get_matches) = host_matches.subcommand_matches("create") {
@@ -178,15 +188,14 @@ fn delete_host(host_search: String, view: String, config: bloxconfig::Config) {
 }
 
 
-fn get_host(hostname: String, view: String, config: bloxconfig::Config) {
-    let search=format!("{}?name={}&view={}", ENDPOINT, hostname, view);
+fn get_host(search: &str, view: String, config: bloxconfig::Config) {
     let r = restapi::RESTApi {
         config: config
     };
     let mut api_out = InfobloxResponse{ ..Default::default() };
-    api_out.process(r.get(search));
+    api_out.process(r.get(search.to_string()));
     if api_out.count == 0 {
-        println!("Error: {} not found.", hostname);
+        println!("Error: {} not found.", search);
     } else {
         let entries = serialize_entries(api_out.response);
         for entry in entries {
