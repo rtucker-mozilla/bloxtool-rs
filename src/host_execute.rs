@@ -13,7 +13,7 @@ use std::process::exit;
 struct Ipv6addr {
     _ref: String,
     #[serde(default)]
-    mac: String,
+    duid: String,
     #[serde(default)]
     host: String,
     #[serde(default)]
@@ -67,9 +67,9 @@ impl Host {
         if self.ipv6addrs.len() > 0 {
             let ipv6str = format!("ipv6addr={}", self.ipv6addrs[0].ipv6addr);
             outvec.push(ipv6str.to_string());
-            if self.ipv4addrs[0].mac != "" {
-                let ipv4macstr = format!("ipv4mac={}", self.ipv4addrs[0].mac);
-                outvec.push(ipv4macstr.to_string());
+            if self.ipv6addrs[0].duid != "" {
+                let ipv6duidstr = format!("ipv6duid={}", self.ipv6addrs[0].duid);
+                outvec.push(ipv6duidstr.to_string());
             }
         }
         outvec.push(view_string);

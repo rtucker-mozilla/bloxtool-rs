@@ -186,6 +186,58 @@ subcommands:
                     - view:
                         required: true
                         index: 4
+    - domain:authoratative:
+        about: manage authoratative zone
+        author: Rob Tucker <rtucker@mozilla.com>
+        subcommands:
+            - create:
+                help: Create authoratative domain
+                args:
+                    - name:
+                        required: true
+                        index: 1
+                    - view:
+                        required: true
+                        index: 2
+                    - nameserver_group:
+                        long: "nameserver_group"
+                        value_name: nameserver_group
+                        required: false
+            - delete:
+                help: Delete authoratative domain
+                args:
+                    - name:
+                        required: true
+                        index: 1
+                    - view:
+                        required: true
+                        index: 2
+    - domain:delegated:
+        about: manage delegated zone
+        author: Rob Tucker <rtucker@mozilla.com>
+        subcommands:
+            - create:
+                help: Create delegated domain
+                args:
+                    - name:
+                        required: true
+                        index: 1
+                    - nameservers:
+                        required: true
+                        help: Comma separated list of DNS servers to delegate to
+                        index: 2
+                    - view:
+                        required: true
+                        index: 3
+            - delete:
+                help: Delete authoratative domain
+                args:
+                    - name:
+                        required: true
+                        index: 1
+                    - view:
+                        required: true
+                        index: 2
     - search:
         about: global search
         author: Rob Tucker <rtucker@mozilla.com>

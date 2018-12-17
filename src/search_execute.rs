@@ -8,6 +8,8 @@ use cname_execute::Cname;
 use mx_execute::MX;
 use a_execute::AddressRecord;
 use txt_execute::TxtRecord;
+use domain_authoratative_execute::AuthoratativeDomain;
+use domain_delegated_execute::DelegatedDomain;
 
 const ENDPOINT: &'static str = "search";
 // Main entry point for someone running bloxtool host <subcommand>
@@ -63,6 +65,14 @@ pub fn execute(search_matches: &clap::ArgMatches, config: bloxconfig::Config){
             "record:txt" => { 
                 let txt: TxtRecord = serde_json::from_value(clone).unwrap();
                 println!("type=record:txt {}", txt);
+            },
+            "zone_auth" => {
+                let zone: AuthoratativeDomain = serde_json::from_value(clone).unwrap();
+                println!("type=domain:authoratative {}", zone);
+            },
+            "zone_delegated" => {
+                let zone: DelegatedDomain = serde_json::from_value(clone).unwrap();
+                println!("type=domain:delegated {}", zone);
             },
             _ => { println!("type=unclassified {:?}", entry) }
         }
