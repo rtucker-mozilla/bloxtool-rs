@@ -20,6 +20,7 @@ pub struct InfobloxResponse {
     pub count: usize,
     pub is_error: bool,
     pub is_empty: bool,
+    pub text: String,
     pub response: Vec<Value>
 }
 
@@ -29,6 +30,7 @@ impl Default for InfobloxResponse {
             count: 0,
             is_error: false,
             is_empty: true,
+            text: String::new(),
             response: Vec::new()
         }
     }
@@ -73,7 +75,14 @@ impl InfobloxResponse {
         self.calculate_empty(&response);
         self.calculate_count(&response);
         match response {
-            Some(_resp) => { self.response = _resp },
+            Some(_resp) => { 
+                let mut json_vec = vec![];
+                for entry in &_resp {
+                    json_vec.push(entry.to_string());
+                }
+                self.text = format!("[{}]", json_vec.join(","));
+                self.response = _resp;
+            },
             None => { 
                 self.is_error = true;
             }

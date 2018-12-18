@@ -1,5 +1,5 @@
 name: bloxtool-rs
-version: "0.0.55"
+version: "0.0.56"
 author: Rob Tucker <rtucker@mozilla.com>
 about: CLI interface to infoblox
 subcommands:
@@ -266,6 +266,16 @@ subcommands:
                     - network:
                         required: true
                         index: 1
+            - search:
+                help: Search For Host Objects
+                args:
+                    - search_string:
+                        required: true
+                        index: 1
+                    - json:
+                        help: Return response in json
+                        long: json
+                        takes_value: false
             - delete:
                 help: Create network object
                 args:

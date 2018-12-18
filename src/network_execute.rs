@@ -36,14 +36,16 @@ const ENDPOINT: &'static str = "network";
 pub fn execute(network_matches: &clap::ArgMatches, config: bloxconfig::Config){
     let mut network_search = "";
     let mut search_string = "";
+    let mut raw_json = false;
     // executed when someone does bloxtool host get <hostname> <view>
     if let Some(_get_matches) = network_matches.subcommand_matches("search") {
-        match _get_matches.value_of("network"){
+        match _get_matches.value_of("search_string"){
             Some(value) => { search_string = value },
-            None => println!("network Required")
+            None => println!("search_string Required")
         }
+        raw_json = _get_matches.is_present("json");
         let search=format!("{}?{}", ENDPOINT, search_string);
-        get_network(&search, config.clone());
+        get_network(&search, config.clone(), raw_json);
     }
 
     if let Some(_get_matches) = network_matches.subcommand_matches("get") {
@@ -52,7 +54,7 @@ pub fn execute(network_matches: &clap::ArgMatches, config: bloxconfig::Config){
             None => println!("Network Required")
         }
         let search=format!("{}?network={}", ENDPOINT, network_search);
-        get_network(&search, config.clone());
+        get_network(&search, config.clone(), false);
     }
 
     if let Some(_get_matches) = network_matches.subcommand_matches("create") {
@@ -133,18 +135,22 @@ fn serialize_entries(entries: Vec<Value>) -> Vec<Network> {
 
 }
 
-fn get_network(network_string: &str, config: bloxconfig::Config) {
+fn get_network(network_string: &str, config: bloxconfig::Config, raw_json: bool) {
     let r = restapi::RESTApi {
         config: config
     };
     let mut api_out = InfobloxResponse{ ..Default::default() };
     api_out.process(r.get(network_string.to_string()));
-    if api_out.count == 0 {
+    if api_out.count == 0 && !raw_json {
         println!("Error: {} not found.", network_string);
     } else {
-        let entries = serialize_entries(api_out.response);
-        for entry in entries {
-            println!("{}", entry);
+        if !raw_json {
+            let entries = serialize_entries(api_out.response);
+            for entry in entries {
+                println!("{}", entry);
+            }
+        } else {
+            println!("{}", api_out.text);
         }
     }
 }
