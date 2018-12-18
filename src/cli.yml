@@ -1,5 +1,5 @@
 name: bloxtool-rs
-version: "0.0.54"
+version: "0.0.55"
 author: Rob Tucker <rtucker@mozilla.com>
 about: CLI interface to infoblox
 subcommands:
@@ -256,3 +256,19 @@ subcommands:
                 help: Limit search to this objtype
                 long: objtype
                 takes_value: true
+    - network:
+        about: manage network object
+        author: Rob Tucker <rtucker@mozilla.com>
+        subcommands:
+            - create:
+                help: Create network object
+                args:
+                    - network:
+                        required: true
+                        index: 1
+            - delete:
+                help: Create network object
+                args:
+                    - network:
+                        required: true
+                        index: 1
