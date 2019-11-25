@@ -96,8 +96,8 @@ pub struct RESTApi {
 
 impl RESTApi {
 
-    pub fn get_client(&self) -> reqwest::Client {
-        return reqwest::Client::new();
+    pub fn get_client(&self, config: bloxconfig::Config) -> reqwest::Client {
+        return reqwest::ClientBuilder::new().danger_accept_invalid_certs(config.allow_insecure_ssl).build().unwrap();
     }
 
     fn get_url(&self, hostpath: &String, ipath: &String) -> String {
@@ -111,8 +111,8 @@ impl RESTApi {
     }
 
     pub fn get(&self, iref: String) -> Option<Vec<Value>> {
-        let client = self.get_client();
         let config = self.config.clone();
+        let client = self.get_client(config.clone());
         let host_path = config.full_path();
         let full_path = self.get_url(&host_path, &iref);
         let resp = client.get(full_path.as_str()).basic_auth(config.username, Some(config.password)).send();
@@ -140,7 +140,8 @@ impl RESTApi {
 
     pub fn delete(&self, iref: String) -> Result<Value, String> {
 
-        let client = self.get_client();
+        let config = self.config.clone();
+        let client = self.get_client(config.clone());
         let config = self.config.clone();
         let _ref = self.trim_quotes(iref);
         let host_path = config.full_path();
@@ -159,7 +160,8 @@ impl RESTApi {
 
 
     pub fn create(&self, iref: String, post_data: Value) -> Option<Vec<Value>> {
-        let client = self.get_client();
+        let config = self.config.clone();
+        let client = self.get_client(config.clone());
         let config = self.config.clone();
         let host_path = config.full_path();
         let full_path = self.get_url(&host_path, &iref);
@@ -203,6 +205,7 @@ fn test_trim_quotes() {
     let config = bloxconfig::Config{
         host: "https://localhost".to_string(),
         username: "admin".to_string(),
+        allow_insecure_ssl: false,
         password: "admin".to_string()
 
     };

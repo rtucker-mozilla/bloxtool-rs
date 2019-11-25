@@ -7,6 +7,7 @@ static VERSION: &'static str = "2.6";
 pub struct Config {
     pub username: String,
     pub password: String,
+    pub allow_insecure_ssl: bool,
     pub host: String,
 }
 
@@ -47,6 +48,19 @@ pub fn get_config(path: PathBuf) -> Config {
         }
     };
 
+    let l_allow_insecure_ssl = match main_config.get("allow_insecure_ssl") {
+        Some(value) => { 
+            if value.to_string().to_uppercase() == "TRUE" {
+                true
+            } else {
+                false
+            }
+        },
+        None => { 
+            false
+        }
+    };
+
     let l_password = match main_config.get("password") {
         Some(value) => { value.to_string() },
         None => { 
@@ -66,6 +80,7 @@ pub fn get_config(path: PathBuf) -> Config {
     let config = Config{
         username: l_username,
         password: l_password,
+        allow_insecure_ssl: l_allow_insecure_ssl,
         host: l_host
     };
     return config;
@@ -76,6 +91,7 @@ fn test_full_path() {
     let config = Config{
         username: "username".to_string(),
         password: "password".to_string(),
+        allow_insecure_ssl: false,
         host: "https://localhost/".to_string(),
     };
     assert_eq!(config.full_path(), format!("https://localhost/wapi/v{}", VERSION));
@@ -85,6 +101,7 @@ fn test_full_path_hostname_not_having_trailing_slash() {
     let config = Config{
         username: "username".to_string(),
         password: "password".to_string(),
+        allow_insecure_ssl: false,
         host: "https://localhost".to_string(),
     };
     assert_eq!(config.full_path(), format!("https://localhost/wapi/v{}", VERSION));

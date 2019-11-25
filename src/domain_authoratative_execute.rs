@@ -147,6 +147,7 @@ mod test_cname {
         let config = bloxconfig::Config{
             username: "admin".to_string(),
             password: "password".to_string(),
+            allow_insecure_ssl: false,
             host: url
         };
         let search=format!("record:cname?name=foo&view=Public");

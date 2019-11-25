@@ -176,6 +176,7 @@ mod test_wtxt {
         let config = bloxconfig::Config{
             username: "admin".to_string(),
             password: "password".to_string(),
+            allow_insecure_ssl: false,
             host: url
         };
         let search=format!("record:txt?name=foo&view=Public");
@@ -211,6 +212,7 @@ mod test_wtxt {
         let config = bloxconfig::Config{
             username: "admin".to_string(),
             password: "password".to_string(),
+            allow_insecure_ssl: false,
             host: url
         };
         let mut api_out = InfobloxResponse{ ..Default::default() };
