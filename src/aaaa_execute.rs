@@ -133,6 +133,7 @@ fn create_aaaa(aaaa: String, ipv6addr: String, view: String, config: bloxconfig:
     }
 }
 
+#[allow(dead_code)]
 fn serialize_entries(entries: Vec<Value>) -> Vec<AAAA> {
     let entries: Vec<Value> = entries;
     let mut return_aaaas = vec![];

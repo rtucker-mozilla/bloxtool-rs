@@ -141,6 +141,7 @@ fn create_delegated_domain(name: &str, nameservers: &str, view: &str,  config: b
     }
 }
 
+#[allow(dead_code)]
 fn serialize_entries(entries: Vec<Value>) -> Vec<DelegatedDomain> {
     let entries: Vec<Value> = entries;
     let mut return_domains = vec![];

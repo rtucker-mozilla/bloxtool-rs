@@ -120,6 +120,7 @@ fn create_authoratative_domain(name: String, view: String, nameserver_group: Str
     }
 }
 
+#[allow(dead_code)]
 fn serialize_entries(entries: Vec<Value>) -> Vec<AuthoratativeDomain> {
     let entries: Vec<Value> = entries;
     let mut return_domains = vec![];
