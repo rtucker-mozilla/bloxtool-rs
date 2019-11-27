@@ -25,7 +25,7 @@ pub struct AAAA {
 
 impl std::fmt::Display for AAAA {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-        write!(f, "_ref={} name={} view={}", self._ref, self.name, self.view)
+        write!(f, "_ref={} name={} ipv6addr={} view={}", self._ref, self.name, self.ipv6addr, self.view)
     }
 }
 
