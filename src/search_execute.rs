@@ -6,6 +6,7 @@ use serde_json;
 use host_execute::Host;
 use cname_execute::Cname;
 use mx_execute::MX;
+use aaaa_execute::AAAA;
 use a_execute::AddressRecord;
 use txt_execute::TxtRecord;
 use domain_authoratative_execute::AuthoratativeDomain;
@@ -61,6 +62,10 @@ pub fn execute(search_matches: &clap::ArgMatches, config: bloxconfig::Config){
             "record:cname" => { 
                 let cname: Cname = serde_json::from_value(clone).unwrap();
                 println!("type=record:cname {}", cname);
+            },
+            "record:aaaa" => { 
+                let aaaa: AAAA = serde_json::from_value(clone).unwrap();
+                println!("type=record:aaaa {}", aaaa);
             },
             "record:txt" => { 
                 let txt: TxtRecord = serde_json::from_value(clone).unwrap();
