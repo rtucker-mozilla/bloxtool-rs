@@ -115,6 +115,40 @@ subcommands:
                     - view:
                         required: true
                         index: 2
+    - record:aaaa:
+        about: act on AAAA record
+        author: Rob Tucker <rtucker@mozilla.com>
+        subcommands:
+            - get:
+                help: Get AAAA Record Object
+                args:
+                    - aaaa_record:
+                        required: true
+                        index: 1
+                    - view:
+                        required: true
+                        index: 2
+            - create:
+                help: Create Address Record Object
+                args:
+                    - aaaa_record:
+                        required: true
+                        index: 1
+                    - ipv6address:
+                        required: true
+                        index: 2
+                    - view:
+                        required: true
+                        index: 3
+            - delete:
+                help: Delete Address Record Object
+                args:
+                    - aaaa_record:
+                        required: true
+                        index: 1
+                    - view:
+                        required: true
+                        index: 2
     - record:txt:
         author: Rob Tucker <rtucker@mozilla.com>
         about: Act on TXT object

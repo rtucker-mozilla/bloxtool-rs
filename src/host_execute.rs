@@ -188,7 +188,7 @@ fn delete_host(host_search: String, view: String, config: bloxconfig::Config) {
 }
 
 
-fn get_host(search: &str, view: String, config: bloxconfig::Config) {
+fn get_host(search: &str, _view: String, config: bloxconfig::Config) {
     let r = restapi::RESTApi {
         config: config
     };

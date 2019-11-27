@@ -17,6 +17,7 @@ mod bloxconfig;
 mod host_execute;
 mod cname_execute;
 mod a_execute;
+mod aaaa_execute;
 mod txt_execute;
 mod mx_execute;
 mod search_execute;
@@ -44,6 +45,11 @@ fn main() {
 
     match matches.subcommand_matches("record:a") {
         Some(value) => { a_execute::execute(value, config.clone()) },
+        None => {}
+    }
+
+    match matches.subcommand_matches("record:aaaa") {
+        Some(value) => { aaaa_execute::execute(value, config.clone()) },
         None => {}
     }
 
