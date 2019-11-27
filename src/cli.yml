@@ -1,14 +1,11 @@
 name: bloxtool-rs
-version: "0.0.55"
+version: "0.0.56"
 author: Rob Tucker <rtucker@mozilla.com>
 about: CLI interface to infoblox
 subcommands:
     - record:host:
-        about: act on host object
-        author: Rob Tucker <rtucker@mozilla.com>
         subcommands:
             - get:
-                help: Get Host object
                 args:
                     - hostname:
                         required: true
@@ -17,13 +14,11 @@ subcommands:
                         required: true
                         index: 2
             - search:
-                help: Search For Host Objects
                 args:
                     - search_string:
                         required: true
                         index: 1
             - create:
-                help: Create Host object
                 args:
                     - hostname:
                         required: true
@@ -39,7 +34,6 @@ subcommands:
                         value_name: mac
                         required: false
             - delete:
-                help: Delete Host object
                 args:
                     - hostname:
                         required: true
@@ -48,11 +42,8 @@ subcommands:
                         required: true
                         index: 2
     - record:cname:
-        about: act on cname object
-        author: Rob Tucker <rtucker@mozilla.com>
         subcommands:
             - get:
-                help: Get CNAME Object
                 args:
                     - cname:
                         required: true
@@ -61,7 +52,6 @@ subcommands:
                         required: true
                         index: 2
             - create:
-                help: Create CNAME Object
                 args:
                     - alias:
                         required: true
@@ -73,7 +63,6 @@ subcommands:
                         required: true
                         index: 3
             - delete:
-                help: Delete CNAME Object
                 args:
                     - cname:
                         required: true
@@ -82,11 +71,8 @@ subcommands:
                         required: true
                         index: 2
     - record:a:
-        about: act on address record
-        author: Rob Tucker <rtucker@mozilla.com>
         subcommands:
             - get:
-                help: Get Address Record Object
                 args:
                     - address_record:
                         required: true
@@ -95,7 +81,6 @@ subcommands:
                         required: true
                         index: 2
             - create:
-                help: Create Address Record Object
                 args:
                     - address_record:
                         required: true
@@ -107,7 +92,6 @@ subcommands:
                         required: true
                         index: 3
             - delete:
-                help: Delete Address Record Object
                 args:
                     - address_record:
                         required: true
@@ -116,11 +100,8 @@ subcommands:
                         required: true
                         index: 2
     - record:aaaa:
-        about: act on AAAA record
-        author: Rob Tucker <rtucker@mozilla.com>
         subcommands:
             - get:
-                help: Get AAAA Record Object
                 args:
                     - aaaa_record:
                         required: true
@@ -129,7 +110,6 @@ subcommands:
                         required: true
                         index: 2
             - create:
-                help: Create Address Record Object
                 args:
                     - aaaa_record:
                         required: true
@@ -141,7 +121,6 @@ subcommands:
                         required: true
                         index: 3
             - delete:
-                help: Delete Address Record Object
                 args:
                     - aaaa_record:
                         required: true
@@ -150,11 +129,8 @@ subcommands:
                         required: true
                         index: 2
     - record:txt:
-        author: Rob Tucker <rtucker@mozilla.com>
-        about: Act on TXT object
         subcommands:
             - get:
-                help: Get TXT Record Object
                 args:
                     - txt_record:
                         required: true
@@ -163,7 +139,6 @@ subcommands:
                         required: true
                         index: 2
             - create:
-                help: Create TXT Record Object
                 args:
                     - txt_record:
                         required: true
@@ -175,7 +150,6 @@ subcommands:
                         required: true
                         index: 3
             - delete:
-                help: Delete TXT Record Object
                 args:
                     - txt_record:
                         required: true
@@ -184,11 +158,8 @@ subcommands:
                         required: true
                         index: 2
     - record:mx:
-        about: act on mx object
-        author: Rob Tucker <rtucker@mozilla.com>
         subcommands:
             - get:
-                help: Get MX Records by Destination
                 args:
                     - name:
                         required: true
@@ -197,7 +168,6 @@ subcommands:
                         required: true
                         index: 2
             - create:
-                help: Create MX Object
                 args:
                     - name:
                         required: true
@@ -212,7 +182,6 @@ subcommands:
                         required: true
                         index: 4
             - delete:
-                help: Delete MX Object
                 args:
                     - name:
                         required: true
@@ -227,11 +196,8 @@ subcommands:
                         required: true
                         index: 4
     - domain:authoratative:
-        about: manage authoratative zone
-        author: Rob Tucker <rtucker@mozilla.com>
         subcommands:
             - create:
-                help: Create authoratative domain
                 args:
                     - name:
                         required: true
@@ -243,8 +209,8 @@ subcommands:
                         long: "nameserver_group"
                         value_name: nameserver_group
                         required: false
+                        help: "Name of NS Group from Infoblox"
             - delete:
-                help: Delete authoratative domain
                 args:
                     - name:
                         required: true
@@ -253,11 +219,8 @@ subcommands:
                         required: true
                         index: 2
     - domain:delegated:
-        about: manage delegated zone
-        author: Rob Tucker <rtucker@mozilla.com>
         subcommands:
             - create:
-                help: Create delegated domain
                 args:
                     - name:
                         required: true
@@ -270,7 +233,6 @@ subcommands:
                         required: true
                         index: 3
             - delete:
-                help: Delete authoratative domain
                 args:
                     - name:
                         required: true
@@ -279,8 +241,6 @@ subcommands:
                         required: true
                         index: 2
     - search:
-        about: global search
-        author: Rob Tucker <rtucker@mozilla.com>
         args:
             - search_string:
                 required: true
@@ -291,17 +251,13 @@ subcommands:
                 long: objtype
                 takes_value: true
     - network:
-        about: manage network object
-        author: Rob Tucker <rtucker@mozilla.com>
         subcommands:
             - create:
-                help: Create network object
                 args:
                     - network:
                         required: true
                         index: 1
             - delete:
-                help: Create network object
                 args:
                     - network:
                         required: true

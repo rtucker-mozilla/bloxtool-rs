@@ -26,12 +26,13 @@ mod domain_authoratative_execute;
 mod domain_delegated_execute;
 mod network_execute;
 use clap::App;
+use clap::AppSettings;
 
 fn main() {
     let home_path = dirs::home_dir().unwrap();
     let config = bloxconfig::get_config(home_path);
     let _yaml = load_yaml!("cli.yml");
-    let matches = App::from_yaml(_yaml).get_matches();
+    let matches = App::from_yaml(_yaml).setting(AppSettings::GlobalVersion).setting(AppSettings::SubcommandRequiredElseHelp).get_matches();
 
     match matches.subcommand_matches("record:host") {
         Some(value) => { host_execute::execute(value, config.clone()) },
