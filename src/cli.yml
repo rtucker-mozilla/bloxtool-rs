@@ -41,7 +41,7 @@ subcommands:
                     - view:
                         required: true
                         index: 2
-    - record:host:
+    - record:cname:
         subcommands:
             - get:
                 args:
