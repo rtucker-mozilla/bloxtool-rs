@@ -41,6 +41,7 @@ subcommands:
                     - view:
                         required: true
                         index: 2
+    - record:host:
         subcommands:
             - get:
                 args:
