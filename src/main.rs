@@ -17,6 +17,7 @@ mod bloxconfig;
 mod host_execute;
 mod cname_execute;
 mod caa_execute;
+mod srv_execute;
 mod a_execute;
 mod aaaa_execute;
 mod txt_execute;
@@ -47,6 +48,11 @@ fn main() {
 
     match matches.subcommand_matches("record:caa") {
         Some(value) => { caa_execute::execute(value, config.clone()) },
+        None => {}
+    }
+
+    match matches.subcommand_matches("record:srv") {
+        Some(value) => { srv_execute::execute(value, config.clone()) },
         None => {}
     }
 
