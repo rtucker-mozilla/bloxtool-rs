@@ -1,5 +1,5 @@
 name: bloxtool-rs
-version: "0.0.57"
+version: "0.0.58"
 author: Rob Tucker <rtucker@mozilla.com>
 about: CLI interface to infoblox
 subcommands:
@@ -41,6 +41,47 @@ subcommands:
                     - view:
                         required: true
                         index: 2
+    - record:caa:
+        subcommands:
+            - get:
+                args:
+                    - domain:
+                        required: true
+                        index: 1
+                    - tag:
+                        required: true
+                        index: 2
+                    - view:
+                        required: true
+                        index: 3
+            - create:
+                args:
+                    - domain:
+                        required: true
+                        index: 1
+                    - tag:
+                        required: true
+                        index: 2
+                    - value:
+                        required: true
+                        index: 3
+                    - view:
+                        required: true
+                        index: 4
+            - delete:
+                args:
+                    - domain:
+                        required: true
+                        index: 1
+                    - tag:
+                        required: true
+                        index: 2
+                    - value:
+                        required: true
+                        index: 3
+                    - view:
+                        required: true
+                        index: 4
     - record:cname:
         subcommands:
             - get:
