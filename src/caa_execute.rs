@@ -16,7 +16,7 @@ use std::process::exit;
 
 #[derive(Deserialize, Clone)]
 #[allow(dead_code)]
-struct CnameResponse {
+struct CAAResponse {
     objects: Vec<CAA>
 }
 
@@ -231,14 +231,14 @@ mod test_caa {
         reset();
     }
     #[test]
-    fn test_get_cname_single_response () {
+    fn test_get_caa_single_response () {
         let out = r#"[{
             "name": "foo.mozilla.com",
-            "ca_tag": "0",
-            "ca_flag": "issue",
+            "ca_tag": "issue",
+            "ca_flag": 0,
             "ca_value": "digicert.com",
             "_ref": "asfdsadf/Private",
-            "view": "Private",
+            "view": "Private"
           }]"#;
         let url = SERVER_URL.to_string();
         let config = bloxconfig::Config{
@@ -248,7 +248,7 @@ mod test_caa {
             host: url
         };
         let mut api_out = InfobloxResponse{ ..Default::default() };
-        let search=format!("record:cname?name=foo&view=Public");
+        let search=format!("record:caa?name=foo&view=Public");
         let r = restapi::RESTApi {
             config: config
         };
