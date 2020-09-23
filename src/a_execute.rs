@@ -25,7 +25,7 @@ pub struct AddressRecord {
 
 impl std::fmt::Display for AddressRecord {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-        write!(f, "_ref={} name={} view={}", self._ref, self.name, self.view)
+        write!(f, "_ref={} name={} ip={} view={}", self._ref, self.name, self.ipv4addr, self.view)
     }
 }
 
