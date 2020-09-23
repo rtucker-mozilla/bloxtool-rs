@@ -25,7 +25,7 @@ pub struct Cname {
 
 impl std::fmt::Display for Cname {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-        write!(f, "_ref={} name={} view={}", self._ref, self.name, self.view)
+        write!(f, "_ref={} name={} target={} view={}", self._ref, self.name, self.canonical, self.view)
     }
 }
 
