@@ -10,7 +10,7 @@ matrix:
     - cargo test
     - cross build ${BUILDARGS} --release
     before_install:
-    - sudo apt-get install -y libssl1.0.0 libssl1.0-dev musl musl-dev musl-tools
+    - sudo apt-get install -y libssl1.0-dev musl musl-dev musl-tools
     - cargo install cross --force
     install:
     - rustup target add x86_64-unknown-linux-musl
@@ -20,7 +20,7 @@ matrix:
     - PKG_CONFIG_ALLOW_CROSS=1
     - BUILDARGS="--target=${TARGET}"
     - FILENAME=bloxtool-C7-linux-x86_64
-    dist: trusty
+    dist: xenial
     sudo: required
   - os: osx
     rust: stable
