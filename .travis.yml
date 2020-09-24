@@ -28,6 +28,7 @@ matrix:
     - cargo test
     - cargo build --release
     env:
+    - PKG_CONFIG_PATH=/usr/lib/pkgconfig
     - FILENAME=bloxtool-osx-x86_64
     - BUILDARGS=""
 deploy:
