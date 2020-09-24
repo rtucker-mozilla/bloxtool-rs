@@ -20,6 +20,7 @@ matrix:
     - PKG_CONFIG_ALLOW_CROSS=1
     - BUILDARGS="--target=${TARGET}"
     - FILENAME=bloxtool-C7-linux-x86_64
+    - PKG_CONFIG_PATH=/usr/lib/pkgconfig
     dist: xenial
     sudo: required
   - os: osx
@@ -28,7 +29,6 @@ matrix:
     - cargo test
     - cargo build --release
     env:
-    - PKG_CONFIG_PATH=/usr/lib/pkgconfig
     - FILENAME=bloxtool-osx-x86_64
     - BUILDARGS=""
 deploy:
