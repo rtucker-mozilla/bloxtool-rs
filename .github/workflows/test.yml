@@ -25,3 +25,14 @@ jobs:
       - uses: actions-rs/cargo@v1
         with:
           command: test
+  build_and_test_windows:
+    name: bloxtool-rs
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+      - uses: actions-rs/cargo@v1
+        with:
+          command: test
