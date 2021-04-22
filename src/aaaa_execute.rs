@@ -164,8 +164,7 @@ fn get_aaaa(aaaa: String, view: String, config: bloxconfig::Config) {
 #[cfg(test)]
 mod test_aaaa {
     use bloxconfig;
-    use mockito::{Matcher, mock, reset};
-    use mockito::SERVER_URL;
+    use mockito::{Matcher, mock};
     use aaaa_execute::serialize_entries;
     use restapi::InfobloxResponse;
     use restapi;
@@ -173,7 +172,7 @@ mod test_aaaa {
     #[test]
     fn test_get_aaaa_empty () {
         let out = r#"[]"#;
-        let url = SERVER_URL.to_string();
+        let url = mockito::server_url();
         let config = bloxconfig::Config{
             username: "admin".to_string(),
             password: "password".to_string(),
@@ -185,12 +184,7 @@ mod test_aaaa {
         let r = restapi::RESTApi {
             config: config
         };
-        // There is a bug on windows that always sets the verb to <unknown>
-        // https://github.com/lipanski/mockito/issues/41
-        let mut verb = "get";
-        if cfg!(windows) {
-            verb = "<UNKNOWN>";
-        }
+        let verb = "get";
         let _mock = mock(verb, Matcher::Any)
           .with_header("content-type", "application/json")
           .with_body(out)
@@ -199,7 +193,6 @@ mod test_aaaa {
         api_out.process(r.get(search));
         let entries = serialize_entries(api_out.response);
         assert_eq!(entries.len(), 0);
-        reset();
     }
     #[test]
     fn test_get_aaaa_single_response () {
@@ -210,7 +203,7 @@ mod test_aaaa {
             "name": "mozilla.com",
             "ipv6addr": "fe80::1"
           }]"#;
-        let url = SERVER_URL.to_string();
+        let url = mockito::server_url();
         let config = bloxconfig::Config{
             username: "admin".to_string(),
             password: "password".to_string(),
@@ -222,12 +215,7 @@ mod test_aaaa {
         let r = restapi::RESTApi {
             config: config
         };
-        // There is a bug on windows that always sets the verb to <unknown>
-        // https://github.com/lipanski/mockito/issues/41
-        let mut verb = "get";
-        if cfg!(windows) {
-            verb = "<UNKNOWN>";
-        }
+        let verb = "get";
         let _mock = mock(verb, Matcher::Any)
           .with_header("content-type", "application/json")
           .with_body(out)
@@ -236,6 +224,5 @@ mod test_aaaa {
         api_out.process(r.get(search));
         let entries = serialize_entries(api_out.response);
         assert_eq!(entries.len(), 1);
-        reset();
     }
 }

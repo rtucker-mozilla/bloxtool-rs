@@ -189,7 +189,6 @@ fn get_srv(name: String, view: String, config: bloxconfig::Config) {
 mod test_caa {
     use bloxconfig;
     use mockito::{Matcher, mock, reset};
-    use mockito::SERVER_URL;
     use srv_execute::serialize_entries;
     use restapi::InfobloxResponse;
     use restapi;
@@ -197,7 +196,7 @@ mod test_caa {
     #[test]
     fn test_get_caa_empty () {
         let out = r#"[]"#;
-        let url = SERVER_URL.to_string();
+        let url = mockito::server_url();
         let config = bloxconfig::Config{
             username: "admin".to_string(),
             password: "password".to_string(),
@@ -209,12 +208,7 @@ mod test_caa {
         let r = restapi::RESTApi {
             config: config
         };
-        // There is a bug on windows that always sets the verb to <unknown>
-        // https://github.com/lipanski/mockito/issues/41
-        let mut verb = "get";
-        if cfg!(windows) {
-            verb = "<UNKNOWN>";
-        }
+        let verb = "get";
         let _mock = mock(verb, Matcher::Any)
           .with_header("content-type", "application/json")
           .with_body(out)
@@ -236,7 +230,7 @@ mod test_caa {
             "_ref": "asfdsadf/Private",
             "view": "Private"
           }]"#;
-        let url = SERVER_URL.to_string();
+        let url = mockito::server_url();
         let config = bloxconfig::Config{
             username: "admin".to_string(),
             password: "password".to_string(),
@@ -248,12 +242,7 @@ mod test_caa {
         let r = restapi::RESTApi {
             config: config
         };
-        // There is a bug on windows that always sets the verb to <unknown>
-        // https://github.com/lipanski/mockito/issues/41
-        let mut verb = "get";
-        if cfg!(windows) {
-            verb = "<UNKNOWN>";
-        }
+        let verb = "get";
         let _mock = mock(verb, Matcher::Any)
           .with_header("content-type", "application/json")
           .with_body(out)

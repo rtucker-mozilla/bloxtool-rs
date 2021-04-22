@@ -163,8 +163,7 @@ fn get_address_record(cname: String, view: String, config: bloxconfig::Config) {
 #[cfg(test)]
 mod test_cname {
     use bloxconfig;
-    use mockito::{Matcher, mock, reset};
-    use mockito::SERVER_URL;
+    use mockito::{Matcher, mock};
     use a_execute::serialize_entries;
     use restapi::InfobloxResponse;
     use restapi;
@@ -172,7 +171,7 @@ mod test_cname {
     #[test]
     fn test_get_address_record_empty () {
         let out = r#"[]"#;
-        let url = SERVER_URL.to_string();
+        let url = mockito::server_url();
         let config = bloxconfig::Config{
             username: "admin".to_string(),
             password: "password".to_string(),
@@ -184,12 +183,7 @@ mod test_cname {
         let r = restapi::RESTApi {
             config: config
         };
-        // There is a bug on windows that always sets the verb to <unknown>
-        // https://github.com/lipanski/mockito/issues/41
-        let mut verb = "get";
-        if cfg!(windows) {
-            verb = "<UNKNOWN>";
-        }
+        let verb = "get";
         let _mock = mock(verb, Matcher::Any)
           .with_header("content-type", "application/json")
           .with_body(out)
@@ -198,7 +192,6 @@ mod test_cname {
         api_out.process(r.get(search));
         let entries = serialize_entries(api_out.response);
         assert_eq!(entries.len(), 0);
-        reset();
     }
     #[test]
     fn test_get_address_record_single_response () {
@@ -208,7 +201,7 @@ mod test_cname {
             "view": "Private",
             "ipv4addr": "10.0.0.1"
           }]"#;
-        let url = SERVER_URL.to_string();
+        let url = mockito::server_url();
         let config = bloxconfig::Config{
             username: "admin".to_string(),
             password: "password".to_string(),
@@ -220,12 +213,7 @@ mod test_cname {
         let r = restapi::RESTApi {
             config: config
         };
-        // There is a bug on windows that always sets the verb to <unknown>
-        // https://github.com/lipanski/mockito/issues/41
-        let mut verb = "get";
-        if cfg!(windows) {
-            verb = "<UNKNOWN>";
-        }
+        let verb = "get";
         let _mock = mock(verb, Matcher::Any)
           .with_header("content-type", "application/json")
           .with_body(out)
@@ -234,6 +222,5 @@ mod test_cname {
         api_out.process(r.get(search));
         let entries = serialize_entries(api_out.response);
         assert_eq!(entries.len(), 1);
-        reset();
     }
 }

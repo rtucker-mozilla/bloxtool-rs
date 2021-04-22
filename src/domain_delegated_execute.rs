@@ -193,8 +193,7 @@ fn extract_nameservers(nameservers: &str) -> Result<Vec<String>, String> {
 #[cfg(test)]
 mod test_cname {
     use bloxconfig;
-    use mockito::{Matcher, mock, reset};
-    use mockito::SERVER_URL;
+    use mockito::{Matcher, mock};
     use domain_delegated_execute::serialize_entries;
     use restapi::InfobloxResponse;
     use restapi;
@@ -224,7 +223,7 @@ mod test_cname {
     #[test]
     fn test_get_cname_empty () {
         let out = r#"[]"#;
-        let url = SERVER_URL.to_string();
+        let url = mockito::server_url();
         let config = bloxconfig::Config{
             username: "admin".to_string(),
             password: "password".to_string(),
@@ -250,6 +249,5 @@ mod test_cname {
         api_out.process(r.get(search));
         let entries = serialize_entries(api_out.response);
         assert_eq!(entries.len(), 0);
-        reset();
     }
 }

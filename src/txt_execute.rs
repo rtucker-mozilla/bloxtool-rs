@@ -164,7 +164,6 @@ fn get_txt_record(txt_record: String, view: String, config: bloxconfig::Config) 
 mod test_wtxt {
     use bloxconfig;
     use mockito::{Matcher, mock, reset};
-    use mockito::SERVER_URL;
     use txt_execute::serialize_entries;
     use restapi::InfobloxResponse;
     use restapi;
@@ -172,7 +171,7 @@ mod test_wtxt {
     #[test]
     fn test_get_txt_record_empty () {
         let out = r#"[]"#;
-        let url = SERVER_URL.to_string();
+        let url = mockito::server_url();
         let config = bloxconfig::Config{
             username: "admin".to_string(),
             password: "password".to_string(),
@@ -184,12 +183,7 @@ mod test_wtxt {
         let r = restapi::RESTApi {
             config: config
         };
-        // There is a bug on windows that always sets the verb to <unknown>
-        // https://github.com/lipanski/mockito/issues/41
-        let mut verb = "get";
-        if cfg!(windows) {
-            verb = "<UNKNOWN>";
-        }
+        let verb = "get";
         let _mock = mock(verb, Matcher::Any)
           .with_header("content-type", "application/json")
           .with_body(out)
@@ -208,7 +202,7 @@ mod test_wtxt {
             "view": "Private",
             "text": "thetext"
           }]"#;
-        let url = SERVER_URL.to_string();
+        let url = mockito::server_url();
         let config = bloxconfig::Config{
             username: "admin".to_string(),
             password: "password".to_string(),
@@ -220,12 +214,7 @@ mod test_wtxt {
         let r = restapi::RESTApi {
             config: config
         };
-        // There is a bug on windows that always sets the verb to <unknown>
-        // https://github.com/lipanski/mockito/issues/41
-        let mut verb = "get";
-        if cfg!(windows) {
-            verb = "<UNKNOWN>";
-        }
+        let verb = "get";
         let _mock = mock(verb, Matcher::Any)
           .with_header("content-type", "application/json")
           .with_body(out)

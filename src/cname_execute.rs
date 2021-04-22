@@ -164,7 +164,7 @@ fn get_cname(cname: String, view: String, config: bloxconfig::Config) {
 mod test_cname {
     use bloxconfig;
     use mockito;
-    use mockito::{Matcher, mock, reset};
+    use mockito::{Matcher, mock};
     use cname_execute::serialize_entries;
     use restapi::InfobloxResponse;
     use restapi;
@@ -172,7 +172,7 @@ mod test_cname {
     #[test]
     fn test_get_cname_empty () {
         let out = r#"[]"#;
-        let url = &mockito::server_url().to_string();
+        let url = mockito::server_url();
         let config = bloxconfig::Config{
             username: "admin".to_string(),
             password: "password".to_string(),
@@ -198,7 +198,6 @@ mod test_cname {
         api_out.process(r.get(search));
         let entries = serialize_entries(api_out.response);
         assert_eq!(entries.len(), 0);
-        reset();
     }
     #[test]
     fn test_get_cname_single_response () {
@@ -208,7 +207,7 @@ mod test_cname {
             "view": "Private",
             "canonical": "mozilla.com"
           }]"#;
-        let url = SERVER_URL.to_string();
+        let url = mockito::server_url();
         let config = bloxconfig::Config{
             username: "admin".to_string(),
             password: "password".to_string(),
@@ -222,10 +221,7 @@ mod test_cname {
         };
         // There is a bug on windows that always sets the verb to <unknown>
         // https://github.com/lipanski/mockito/issues/41
-        let mut verb = "get";
-        if cfg!(windows) {
-            verb = "<UNKNOWN>";
-        }
+        let verb = "get";
         let _mock = mock(verb, Matcher::Any)
           .with_header("content-type", "application/json")
           .with_body(out)
@@ -234,6 +230,5 @@ mod test_cname {
         api_out.process(r.get(search));
         let entries = serialize_entries(api_out.response);
         assert_eq!(entries.len(), 1);
-        reset();
     }
 }

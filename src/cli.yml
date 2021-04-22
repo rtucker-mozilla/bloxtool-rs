@@ -1,5 +1,5 @@
 name: bloxtool-rs
-version: "0.0.59"
+version: "0.0.60"
 author: Rob Tucker <rtucker@mozilla.com>
 about: CLI interface to infoblox
 subcommands:
