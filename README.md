@@ -1,2 +1,1 @@
-[![Build Status](https://travis-ci.com/rtucker-mozilla/bloxtool-rs.svg?branch=master)](https://travis-ci.com/rtucker-mozilla/bloxtool-rs)
-
+![Test Status](https://github.com/rtucker-mozilla/bloxtool-rs/actions/workflows/test.yml/badge.svg)
