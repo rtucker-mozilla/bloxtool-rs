@@ -163,8 +163,8 @@ fn get_cname(cname: String, view: String, config: bloxconfig::Config) {
 #[cfg(test)]
 mod test_cname {
     use bloxconfig;
+    use mockito;
     use mockito::{Matcher, mock, reset};
-    use mockito::SERVER_URL;
     use cname_execute::serialize_entries;
     use restapi::InfobloxResponse;
     use restapi;
@@ -172,7 +172,7 @@ mod test_cname {
     #[test]
     fn test_get_cname_empty () {
         let out = r#"[]"#;
-        let url = SERVER_URL.to_string();
+        let url = &mockito::server_url().to_string();
         let config = bloxconfig::Config{
             username: "admin".to_string(),
             password: "password".to_string(),
