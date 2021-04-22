@@ -3,9 +3,20 @@ on: [push]
 name: Test
 
 jobs:
-  build_and_test:
+  build_and_test_ubuntu_latest:
     name: bloxtool-rs
     runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+      - uses: actions-rs/cargo@v1
+        with:
+          command: test
+  build_and_test_mac_osx:
+    name: bloxtool-rs
+    runs-on: macos-latest
     steps:
       - uses: actions/checkout@v2
       - uses: actions-rs/toolchain@v1
